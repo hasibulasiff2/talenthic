@@ -1,5 +1,7 @@
 import React from "react";
 import { Search, Briefcase, Code, Palette, ChevronRight } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const categories = [
   { icon: Briefcase, name: "Business", count: 234 },
@@ -33,9 +35,11 @@ const featuredJobs = [
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-accent">
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20">
+    <div className="min-h-screen flex flex-col bg-accent">
+      <Header />
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="container mx-auto px-4 py-20">
         <div className="text-center animate-fade-up">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-secondary">
             Find Your Perfect{" "}
@@ -58,10 +62,10 @@ const Index = () => {
             </button>
           </div>
         </div>
-      </section>
+        </section>
 
-      {/* Categories */}
-      <section className="container mx-auto px-4 py-16">
+        {/* Categories */}
+        <section className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-bold mb-8 text-secondary">
           Browse Categories
         </h2>
@@ -79,10 +83,10 @@ const Index = () => {
             </div>
           ))}
         </div>
-      </section>
+        </section>
 
-      {/* Featured Jobs */}
-      <section className="container mx-auto px-4 py-16">
+        {/* Featured Jobs */}
+        <section className="container mx-auto px-4 py-16">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-secondary">Featured Opportunities</h2>
           <button className="text-primary flex items-center hover:underline">
@@ -107,7 +111,9 @@ const Index = () => {
             </div>
           ))}
         </div>
-      </section>
+        </section>
+      </main>
+      <Footer />
     </div>
   );
 };
