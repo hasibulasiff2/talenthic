@@ -17,11 +17,11 @@ type InternshipResponse = {
   location: string | null;
   duration: string | null;
   salary_range: string | null;
-  companies: Company;
   company_id: string;
   created_at: string;
   requirements: string | null;
   status: string;
+  companies: Company;
 }
 
 const InternshipsPage = () => {
@@ -32,7 +32,7 @@ const InternshipsPage = () => {
         .from("internships")
         .select(`
           *,
-          companies:company_id (
+          companies!inner (
             name,
             logo_url
           )
