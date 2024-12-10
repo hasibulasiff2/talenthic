@@ -38,7 +38,6 @@ const InternshipsPage = () => {
           )
         `)
         .eq("status", "active")
-        .single()
         .returns<InternshipResponse[]>();
 
       if (error) throw error;
