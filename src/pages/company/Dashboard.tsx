@@ -10,15 +10,15 @@ const CompanyDashboard = () => {
     queryKey: ["company-stats"],
     queryFn: async () => {
       const [internships, gigs, applications] = await Promise.all([
-        supabase.from("internships").select("*").count(),
-        supabase.from("gigs").select("*").count(),
-        supabase.from("applications").select("*").count(),
+        supabase.from("internships").select("*", { count: "exact", head: true }),
+        supabase.from("gigs").select("*", { count: "exact", head: true }),
+        supabase.from("applications").select("*", { count: "exact", head: true }),
       ]);
 
       return {
-        internships: internships.count || 0,
-        gigs: gigs.count || 0,
-        applications: applications.count || 0,
+        internships: internships.count ?? 0,
+        gigs: gigs.count ?? 0,
+        applications: applications.count ?? 0,
       };
     },
   });
