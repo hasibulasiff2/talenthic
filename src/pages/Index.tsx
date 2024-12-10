@@ -133,21 +133,29 @@ const Index = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* CTA Section - Updated with better contrast */}
         <section className="container mx-auto px-4 py-16 text-center">
-          <div className="glass-card rounded-3xl p-12 bg-secondary text-white">
-            <h2 className="text-4xl font-bold mb-6">
+          <div className="glass-card rounded-3xl p-12 bg-gradient-to-br from-secondary to-secondary/90 text-white">
+            <h2 className="text-4xl font-bold mb-6 text-white">
               Ready to Start Your Journey?
             </h2>
-            <p className="text-lg mb-8 text-gray-200 max-w-2xl mx-auto">
+            <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
               Whether you're a student looking for opportunities or a company seeking fresh talent,
               Talenthic is here to help you succeed.
             </p>
             <div className="flex justify-center gap-4">
-              <Button size="lg" variant="default" className="text-lg px-8">
+              <Button 
+                size="lg" 
+                variant="default" 
+                className="text-lg px-8 bg-primary hover:bg-primary/90"
+              >
                 Sign Up Now
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 border-white text-white hover:bg-white hover:text-secondary">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="text-lg px-8 border-white/20 bg-white/10 text-white hover:bg-white/20"
+              >
                 Learn More
               </Button>
             </div>
