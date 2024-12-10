@@ -21,7 +21,7 @@ type InternshipResponse = {
   created_at: string;
   requirements: string | null;
   status: string | null;
-  companies: Company;
+  company: Company; // Changed from companies to company since it's a single company
 }
 
 const InternshipsPage = () => {
@@ -32,12 +32,13 @@ const InternshipsPage = () => {
         .from("internships")
         .select(`
           *,
-          companies (
+          company:companies(
             name,
             logo_url
           )
         `)
         .eq("status", "active")
+        .single()
         .returns<InternshipResponse[]>();
 
       if (error) throw error;
@@ -79,10 +80,10 @@ const InternshipsPage = () => {
                 <CardHeader>
                   <div className="flex items-center gap-4 mb-2">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      {internship.companies?.logo_url ? (
+                      {internship.company?.logo_url ? (
                         <img
-                          src={internship.companies.logo_url}
-                          alt={internship.companies.name}
+                          src={internship.company.logo_url}
+                          alt={internship.company.name}
                           className="w-8 h-8 object-contain"
                         />
                       ) : (
@@ -91,7 +92,7 @@ const InternshipsPage = () => {
                     </div>
                     <div>
                       <CardTitle className="text-xl">{internship.title}</CardTitle>
-                      <CardDescription>{internship.companies?.name}</CardDescription>
+                      <CardDescription>{internship.company?.name}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
