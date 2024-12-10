@@ -37,10 +37,11 @@ const InternshipsPage = () => {
             logo_url
           )
         `)
-        .eq("status", "active");
+        .eq("status", "active")
+        .returns<InternshipResponse[]>();
 
       if (error) throw error;
-      return data as InternshipResponse[];
+      return data;
     },
   });
 
