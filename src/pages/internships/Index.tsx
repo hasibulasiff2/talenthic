@@ -5,6 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Building2, MapPin, Clock, DollarSign } from "lucide-react";
 import Header from "@/components/Header";
 
+type Company = {
+  name: string;
+  logo_url: string | null;
+}
+
+type Internship = {
+  id: string;
+  title: string;
+  description: string;
+  location: string | null;
+  duration: string | null;
+  salary_range: string | null;
+  companies: Company;
+}
+
 const InternshipsPage = () => {
   const { data: internships, isLoading } = useQuery({
     queryKey: ["internships"],
@@ -21,7 +36,7 @@ const InternshipsPage = () => {
         .eq("status", "active");
 
       if (error) throw error;
-      return data;
+      return data as Internship[];
     },
   });
 
