@@ -65,6 +65,11 @@ const Header = () => {
               <NavigationMenuContent>
                 <div className="grid gap-3 p-4 w-[400px]">
                   <NavigationMenuLink asChild>
+                    <Link to="/company/dashboard" className="block p-2 hover:bg-accent rounded-md">
+                      Dashboard
+                    </Link>
+                  </NavigationMenuLink>
+                  <NavigationMenuLink asChild>
                     <Link to="/hire" className="block p-2 hover:bg-accent rounded-md">
                       Hire Talent
                     </Link>
