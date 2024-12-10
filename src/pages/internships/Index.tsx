@@ -32,7 +32,7 @@ const InternshipsPage = () => {
         .from("internships")
         .select(`
           *,
-          companies!inner (
+          companies:companies!inner (
             name,
             logo_url
           )
