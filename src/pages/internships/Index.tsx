@@ -10,7 +10,7 @@ type Company = {
   logo_url: string | null;
 }
 
-type Internship = {
+type InternshipResponse = {
   id: string;
   title: string;
   description: string;
@@ -18,6 +18,10 @@ type Internship = {
   duration: string | null;
   salary_range: string | null;
   companies: Company;
+  company_id: string;
+  created_at: string;
+  requirements: string | null;
+  status: string;
 }
 
 const InternshipsPage = () => {
@@ -28,7 +32,7 @@ const InternshipsPage = () => {
         .from("internships")
         .select(`
           *,
-          companies (
+          companies:company_id (
             name,
             logo_url
           )
@@ -36,7 +40,7 @@ const InternshipsPage = () => {
         .eq("status", "active");
 
       if (error) throw error;
-      return data as Internship[];
+      return data as InternshipResponse[];
     },
   });
 
