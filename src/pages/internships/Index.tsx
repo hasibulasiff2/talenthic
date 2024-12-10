@@ -20,7 +20,7 @@ type InternshipResponse = {
   company_id: string;
   created_at: string;
   requirements: string | null;
-  status: string;
+  status: string | null;
   companies: Company;
 }
 
@@ -32,7 +32,7 @@ const InternshipsPage = () => {
         .from("internships")
         .select(`
           *,
-          companies:companies!inner (
+          companies (
             name,
             logo_url
           )
