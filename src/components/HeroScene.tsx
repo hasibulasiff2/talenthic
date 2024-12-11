@@ -7,6 +7,7 @@ export const HeroScene = () => {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const modelsRef = useRef<THREE.Group[]>([]);
+  const mouseRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -40,12 +41,13 @@ export const HeroScene = () => {
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
-    // Create floating objects
+    // Create floating objects with more complex geometries
     const createFloatingObject = (geometry: THREE.BufferGeometry, color: string, position: THREE.Vector3) => {
       const material = new THREE.MeshPhongMaterial({
         color: color,
         transparent: true,
         opacity: 0.9,
+        shininess: 100,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.copy(position);
@@ -58,7 +60,7 @@ export const HeroScene = () => {
       return group;
     };
 
-    // Create multiple floating objects
+    // Create multiple floating objects with more interesting shapes
     const briefcase = createFloatingObject(
       new THREE.BoxGeometry(0.8, 0.6, 0.3),
       '#9b87f5',
@@ -77,6 +79,26 @@ export const HeroScene = () => {
       new THREE.Vector3(0, 0.5, 0)
     );
 
+    const sphere = createFloatingObject(
+      new THREE.SphereGeometry(0.3, 32, 32),
+      '#8B5CF6',
+      new THREE.Vector3(1.5, 1.5, -1)
+    );
+
+    const torus = createFloatingObject(
+      new THREE.TorusGeometry(0.3, 0.1, 16, 32),
+      '#D946EF',
+      new THREE.Vector3(-1.5, -1.5, -1)
+    );
+
+    // Mouse move handler for interactive parallax effect
+    const handleMouseMove = (event: MouseEvent) => {
+      mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
     // Animation
     const animate = () => {
       requestAnimationFrame(animate);
@@ -88,6 +110,10 @@ export const HeroScene = () => {
         // Rotation animation
         group.rotation.y += 0.005;
         group.rotation.x += 0.002;
+
+        // Mouse interaction
+        group.position.x += (mouseRef.current.x * 0.1 - group.position.x) * 0.05;
+        group.position.y += (mouseRef.current.y * 0.1 - group.position.y) * 0.05;
       });
 
       renderer.render(scene, camera);
@@ -112,6 +138,7 @@ export const HeroScene = () => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
       if (containerRef.current && renderer.domElement) {
         containerRef.current.removeChild(renderer.domElement);
       }
