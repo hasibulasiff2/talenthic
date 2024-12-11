@@ -1,8 +1,9 @@
 import React from "react";
-import { Search, Briefcase, Code, Users, MessageSquare, Target, Brain, Clock } from "lucide-react";
+import { Search, Briefcase, Code, Users, MessageSquare, Target, Brain } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { HeroScene } from "@/components/HeroScene";
 
 const features = [
   {
@@ -39,13 +40,14 @@ const Index = () => {
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="container mx-auto px-4 py-20">
-          <div className="text-center animate-fade-up">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-secondary">
+        <section className="container mx-auto px-4 py-20 relative overflow-hidden">
+          <HeroScene />
+          <div className="text-center animate-fade-up relative z-10">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-secondary bg-accent/80 backdrop-blur-sm inline-block px-4 py-2 rounded-lg">
               Connect with Top{" "}
               <span className="text-primary">Talent & Opportunities</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto bg-accent/80 backdrop-blur-sm px-4 py-2 rounded-lg">
               The ultimate platform connecting talented students with innovative companies 
               for internships and project collaborations.
             </p>
@@ -55,7 +57,7 @@ const Index = () => {
               <input
                 type="text"
                 placeholder="Search for internships or gigs..."
-                className="w-full px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:border-primary shadow-sm text-lg"
+                className="w-full px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:border-primary shadow-sm text-lg bg-white/90 backdrop-blur-sm"
               />
               <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary text-white p-3 rounded-full hover:bg-primary/90 transition-colors">
                 <Search className="w-5 h-5" />
@@ -63,10 +65,17 @@ const Index = () => {
             </div>
 
             <div className="flex justify-center gap-4">
-              <Button size="lg" className="text-lg px-8">
+              <Button 
+                size="lg" 
+                className="text-lg px-8 bg-white/90 backdrop-blur-sm hover:bg-white/100 transition-all"
+              >
                 Find Internships
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="text-lg px-8 bg-white/50 backdrop-blur-sm hover:bg-white/70"
+              >
                 Post a Job
               </Button>
             </div>
