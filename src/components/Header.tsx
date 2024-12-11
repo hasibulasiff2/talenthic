@@ -11,7 +11,7 @@ import {
 
 const Header = () => {
   return (
-    <header className="border-b bg-white">
+    <header className="border-b bg-white sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-secondary">
@@ -70,8 +70,8 @@ const Header = () => {
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link to="/hire" className="block p-2 hover:bg-accent rounded-md">
-                      Hire Talent
+                    <Link to="/post" className="block p-2 hover:bg-accent rounded-md">
+                      Post Opportunity
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>

@@ -12,6 +12,9 @@ import OverviewPage from "./pages/Overview";
 import RemotePage from "./pages/Remote";
 import HirePage from "./pages/Hire";
 import PricingPage from "./pages/Pricing";
+import PostingTypePage from "./pages/post/Index";
+import PostInternshipPage from "./pages/post/internship/Index";
+import PostGigPage from "./pages/post/gig/Index";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +34,9 @@ const App = () => (
           <Route path="/remote" element={<RemotePage />} />
           <Route path="/hire" element={<HirePage />} />
           <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/post" element={<PostingTypePage />} />
+          <Route path="/post/internship" element={<PostInternshipPage />} />
+          <Route path="/post/gig" element={<PostGigPage />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
