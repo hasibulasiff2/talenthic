@@ -3,18 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Form } from "@/components/ui/form";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { FormFields } from "./FormFields";
 
 interface PostingFormProps {
   type: "internship" | "gig";
@@ -61,25 +53,25 @@ const PostingForm = ({ type }: PostingFormProps) => {
         return;
       }
 
-      // First, get or create company for the user
+      // First, get the user's profile
       const { data: profile } = await supabase
         .from("profiles")
-        .select("*")
+        .select("*, companies!profiles(id)")
         .eq("id", user.id)
         .single();
 
-      if (!profile?.is_company_account) {
+      if (!profile) {
+        toast.error("Profile not found");
+        return;
+      }
+
+      if (!profile.is_company_account) {
         toast.error("You need a company account to post opportunities");
         return;
       }
 
-      const { data: company } = await supabase
-        .from("companies")
-        .select("*")
-        .eq("id", profile.company_id)
-        .single();
-
-      if (!company) {
+      const company = profile.companies?.[0];
+      if (!company?.id) {
         toast.error("Please complete your company profile first");
         navigate("/company/profile");
         return;
@@ -116,132 +108,7 @@ const PostingForm = ({ type }: PostingFormProps) => {
     <Card className="p-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter title" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Enter detailed description"
-                    className="min-h-[150px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {type === "internship" && (
-            <>
-              <FormField
-                control={form.control}
-                name="requirements"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Requirements</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter requirements"
-                        className="min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Location</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter location" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="salary_range"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Salary Range</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., $1000-$2000/month" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
-          )}
-
-          {type === "gig" && (
-            <FormField
-              control={form.control}
-              name="budget_range"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Budget Range</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., $500-$1000" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
-
-          <FormField
-            control={form.control}
-            name="duration"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Duration</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., 3 months" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="skills"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Required Skills</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter skills, separated by commas" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+          <FormFields type={type} form={form} />
           <div className="flex justify-end gap-4">
             <Button
               type="button"

@@ -266,6 +266,75 @@ export type Database = {
           },
         ]
       }
+      posting_drafts: {
+        Row: {
+          budget_range: string | null
+          company_id: string | null
+          created_at: string
+          creator_id: string | null
+          current_step: string
+          description: string | null
+          duration: string | null
+          id: string
+          location: string | null
+          requirements: string | null
+          salary_range: string | null
+          skills: string[] | null
+          status: string | null
+          title: string | null
+          type: string
+        }
+        Insert: {
+          budget_range?: string | null
+          company_id?: string | null
+          created_at?: string
+          creator_id?: string | null
+          current_step?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          location?: string | null
+          requirements?: string | null
+          salary_range?: string | null
+          skills?: string[] | null
+          status?: string | null
+          title?: string | null
+          type: string
+        }
+        Update: {
+          budget_range?: string | null
+          company_id?: string | null
+          created_at?: string
+          creator_id?: string | null
+          current_step?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          location?: string | null
+          requirements?: string | null
+          salary_range?: string | null
+          skills?: string[] | null
+          status?: string | null
+          title?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posting_drafts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posting_drafts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           bio: string | null
