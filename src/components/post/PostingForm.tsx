@@ -53,24 +53,28 @@ const PostingForm = ({ type }: PostingFormProps) => {
         return;
       }
 
-      // First, get the user's profile
-      const { data: profile } = await supabase
+      // First, get the user's profile with the company relationship
+      const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("*, companies!profiles(id)")
+        .select(`
+          *,
+          companies:companies(*)
+        `)
         .eq("id", user.id)
         .single();
 
-      if (!profile) {
+      if (profileError || !profileData) {
         toast.error("Profile not found");
         return;
       }
 
-      if (!profile.is_company_account) {
+      if (!profileData.is_company_account) {
         toast.error("You need a company account to post opportunities");
         return;
       }
 
-      const company = profile.companies?.[0];
+      // Access the company through the companies relationship
+      const company = profileData.companies?.[0];
       if (!company?.id) {
         toast.error("Please complete your company profile first");
         navigate("/company/profile");
