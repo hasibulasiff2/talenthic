@@ -51,6 +51,27 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          type?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           created_at: string
@@ -165,34 +186,43 @@ export type Database = {
       }
       gigs: {
         Row: {
+          application_deadline: string | null
           budget_range: string | null
+          category: string | null
           company_id: string
           created_at: string
           description: string
           duration: string | null
           id: string
+          is_featured: boolean | null
           skills: string[] | null
           status: string | null
           title: string
         }
         Insert: {
+          application_deadline?: string | null
           budget_range?: string | null
+          category?: string | null
           company_id: string
           created_at?: string
           description: string
           duration?: string | null
           id?: string
+          is_featured?: boolean | null
           skills?: string[] | null
           status?: string | null
           title: string
         }
         Update: {
+          application_deadline?: string | null
           budget_range?: string | null
+          category?: string | null
           company_id?: string
           created_at?: string
           description?: string
           duration?: string | null
           id?: string
+          is_featured?: boolean | null
           skills?: string[] | null
           status?: string | null
           title?: string
@@ -209,11 +239,14 @@ export type Database = {
       }
       internships: {
         Row: {
+          application_deadline: string | null
+          category: string | null
           company_id: string
           created_at: string
           description: string
           duration: string | null
           id: string
+          is_featured: boolean | null
           location: string | null
           requirements: string | null
           salary_range: string | null
@@ -221,11 +254,14 @@ export type Database = {
           title: string
         }
         Insert: {
+          application_deadline?: string | null
+          category?: string | null
           company_id: string
           created_at?: string
           description: string
           duration?: string | null
           id?: string
+          is_featured?: boolean | null
           location?: string | null
           requirements?: string | null
           salary_range?: string | null
@@ -233,11 +269,14 @@ export type Database = {
           title: string
         }
         Update: {
+          application_deadline?: string | null
+          category?: string | null
           company_id?: string
           created_at?: string
           description?: string
           duration?: string | null
           id?: string
+          is_featured?: boolean | null
           location?: string | null
           requirements?: string | null
           salary_range?: string | null
@@ -466,33 +505,91 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string | null
           bio: string | null
           created_at: string
           full_name: string | null
           id: string
           is_company_account: boolean | null
+          is_verified: boolean | null
           resume_url: string | null
           skills: string[] | null
         }
         Insert: {
+          account_type?: string | null
           bio?: string | null
           created_at?: string
           full_name?: string | null
           id: string
           is_company_account?: boolean | null
+          is_verified?: boolean | null
           resume_url?: string | null
           skills?: string[] | null
         }
         Update: {
+          account_type?: string | null
           bio?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
           is_company_account?: boolean | null
+          is_verified?: boolean | null
           resume_url?: string | null
           skills?: string[] | null
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          contract_id: string | null
+          created_at: string
+          id: string
+          rating: number | null
+          reviewed_id: string | null
+          reviewer_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          contract_id?: string | null
+          created_at?: string
+          id?: string
+          rating?: number | null
+          reviewed_id?: string | null
+          reviewer_id?: string | null
+        }
+        Update: {
+          comment?: string | null
+          contract_id?: string | null
+          created_at?: string
+          id?: string
+          rating?: number | null
+          reviewed_id?: string | null
+          reviewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewed_id_fkey"
+            columns: ["reviewed_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {

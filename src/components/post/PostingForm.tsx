@@ -7,6 +7,7 @@ import { Form } from "@/components/ui/form";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { FormFields } from "./FormFields";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 interface PostingFormProps {
   type: "internship" | "gig";
@@ -21,11 +22,14 @@ interface FormData {
   duration?: string;
   budget_range?: string;
   skills?: string;
+  category?: string;
+  application_deadline?: string;
 }
 
 const PostingForm = ({ type }: PostingFormProps) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { session } = useAuth();
 
   const form = useForm<FormData>({
     defaultValues: {
@@ -37,22 +41,20 @@ const PostingForm = ({ type }: PostingFormProps) => {
       duration: "",
       budget_range: "",
       skills: "",
+      category: "",
+      application_deadline: "",
     },
   });
 
   const onSubmit = async (data: FormData) => {
+    if (!session?.user) {
+      toast.error("Please sign in to post an opportunity");
+      navigate("/login");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        toast.error("Please sign in to post an opportunity");
-        navigate("/login");
-        return;
-      }
-
       // First, get the user's profile with the company relationship
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
@@ -60,7 +62,7 @@ const PostingForm = ({ type }: PostingFormProps) => {
           *,
           companies:companies(*)
         `)
-        .eq("id", user.id)
+        .eq("id", session.user.id)
         .single();
 
       if (profileError || !profileData) {
@@ -94,6 +96,8 @@ const PostingForm = ({ type }: PostingFormProps) => {
         skills: data.skills?.split(",").map((skill) => skill.trim()),
         company_id: company.id,
         status: "active",
+        category: data.category,
+        application_deadline: data.application_deadline,
       });
 
       if (error) throw error;

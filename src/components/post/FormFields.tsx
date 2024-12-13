@@ -1,7 +1,10 @@
+import { useQuery } from "@tanstack/react-query";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   title: string;
@@ -12,6 +15,8 @@ interface FormData {
   duration?: string;
   budget_range?: string;
   skills?: string;
+  category?: string;
+  application_deadline?: string;
 }
 
 interface FormFieldsProps {
@@ -20,6 +25,19 @@ interface FormFieldsProps {
 }
 
 export const FormFields = ({ type, form }: FormFieldsProps) => {
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .in("type", [type, "both"]);
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <>
       <FormField
@@ -31,6 +49,31 @@ export const FormFields = ({ type, form }: FormFieldsProps) => {
             <FormControl>
               <Input placeholder="Enter title" {...field} />
             </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="category"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Category</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {categories?.map((category) => (
+                  <SelectItem key={category.id} value={category.name}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}
@@ -142,6 +185,20 @@ export const FormFields = ({ type, form }: FormFieldsProps) => {
             <FormLabel>Required Skills</FormLabel>
             <FormControl>
               <Input placeholder="Enter skills, separated by commas" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="application_deadline"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Application Deadline</FormLabel>
+            <FormControl>
+              <Input type="datetime-local" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
