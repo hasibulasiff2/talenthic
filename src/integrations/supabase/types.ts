@@ -78,93 +78,91 @@ export type Database = {
         }
         Relationships: []
       }
-
-contracts: {
-  Row: {
-    id: string
-    gig_id: string | null
-    company_id: string | null
-    intern_id: string | null
-    status: string | null
-    terms: string
-    start_date: string | null
-    end_date: string | null
-    created_at: string
-    payment_type: Database["public"]["Enums"]["payment_type"] | null
-    hourly_rate: number | null
-    fixed_amount: number | null
-    currency: string | null
-    payment_schedule: string | null
-    total_hours_logged: number | null
-    last_payment_date: string | null
-    title: string | null
-    duration: string | null
-  }
-  Insert: {
-    id?: string
-    gig_id?: string | null
-    company_id?: string | null
-    intern_id?: string | null
-    status?: string | null
-    terms: string
-    start_date?: string | null
-    end_date?: string | null
-    created_at?: string
-    payment_type?: Database["public"]["Enums"]["payment_type"] | null
-    hourly_rate?: number | null
-    fixed_amount?: number | null
-    currency?: string | null
-    payment_schedule?: string | null
-    total_hours_logged?: number | null
-    last_payment_date?: string | null
-    title?: string | null
-    duration?: string | null
-  }
-  Update: {
-    id?: string
-    gig_id?: string | null
-    company_id?: string | null
-    intern_id?: string | null
-    status?: string | null
-    terms?: string
-    start_date?: string | null
-    end_date?: string | null
-    created_at?: string
-    payment_type?: Database["public"]["Enums"]["payment_type"] | null
-    hourly_rate?: number | null
-    fixed_amount?: number | null
-    currency?: string | null
-    payment_schedule?: string | null
-    total_hours_logged?: number | null
-    last_payment_date?: string | null
-    title?: string | null
-    duration?: string | null
-  }
-  Relationships: [
-    {
-      foreignKeyName: "contracts_company_id_fkey"
-      columns: ["company_id"]
-      isOneToOne: false
-      referencedRelation: "companies"
-      referencedColumns: ["id"]
-    },
-    {
-      foreignKeyName: "contracts_gig_id_fkey"
-      columns: ["gig_id"]
-      isOneToOne: false
-      referencedRelation: "gigs"
-      referencedColumns: ["id"]
-    },
-    {
-      foreignKeyName: "contracts_intern_id_fkey"
-      columns: ["intern_id"]
-      isOneToOne: false
-      referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    }
-  ]
-}
-
+      contracts: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          currency: string | null
+          duration: string | null
+          end_date: string | null
+          fixed_amount: number | null
+          gig_id: string | null
+          hourly_rate: number | null
+          id: string
+          intern_id: string | null
+          last_payment_date: string | null
+          payment_schedule: string | null
+          payment_type: Database["public"]["Enums"]["payment_type"] | null
+          start_date: string | null
+          status: string | null
+          terms: string
+          title: string | null
+          total_hours_logged: number | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          currency?: string | null
+          duration?: string | null
+          end_date?: string | null
+          fixed_amount?: number | null
+          gig_id?: string | null
+          hourly_rate?: number | null
+          id?: string
+          intern_id?: string | null
+          last_payment_date?: string | null
+          payment_schedule?: string | null
+          payment_type?: Database["public"]["Enums"]["payment_type"] | null
+          start_date?: string | null
+          status?: string | null
+          terms: string
+          title?: string | null
+          total_hours_logged?: number | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          currency?: string | null
+          duration?: string | null
+          end_date?: string | null
+          fixed_amount?: number | null
+          gig_id?: string | null
+          hourly_rate?: number | null
+          id?: string
+          intern_id?: string | null
+          last_payment_date?: string | null
+          payment_schedule?: string | null
+          payment_type?: Database["public"]["Enums"]["payment_type"] | null
+          start_date?: string | null
+          status?: string | null
+          terms?: string
+          title?: string | null
+          total_hours_logged?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_gig_id_fkey"
+            columns: ["gig_id"]
+            isOneToOne: false
+            referencedRelation: "gigs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_intern_id_fkey"
+            columns: ["intern_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gigs: {
         Row: {
           budget_range: string | null
@@ -693,4 +691,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
