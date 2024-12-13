@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Play, Pause, Plus } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -54,7 +54,13 @@ const TimeTracking = () => {
       description: string;
       hours_logged: number;
     }) => {
-      const { error } = await supabase.from("time_logs").insert(data);
+      const { error } = await supabase.from("time_logs").insert({
+        contract_id: data.contract_id,
+        start_time: data.start_time.toISOString(),
+        end_time: data.end_time.toISOString(),
+        description: data.description,
+        hours_logged: data.hours_logged,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
