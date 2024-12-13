@@ -82,35 +82,56 @@ export type Database = {
         Row: {
           company_id: string | null
           created_at: string
+          currency: string | null
           end_date: string | null
+          fixed_amount: number | null
           gig_id: string | null
+          hourly_rate: number | null
           id: string
           intern_id: string | null
+          last_payment_date: string | null
+          payment_schedule: string | null
+          payment_type: Database["public"]["Enums"]["payment_type"] | null
           start_date: string | null
           status: string | null
           terms: string
+          total_hours_logged: number | null
         }
         Insert: {
           company_id?: string | null
           created_at?: string
+          currency?: string | null
           end_date?: string | null
+          fixed_amount?: number | null
           gig_id?: string | null
+          hourly_rate?: number | null
           id?: string
           intern_id?: string | null
+          last_payment_date?: string | null
+          payment_schedule?: string | null
+          payment_type?: Database["public"]["Enums"]["payment_type"] | null
           start_date?: string | null
           status?: string | null
           terms: string
+          total_hours_logged?: number | null
         }
         Update: {
           company_id?: string | null
           created_at?: string
+          currency?: string | null
           end_date?: string | null
+          fixed_amount?: number | null
           gig_id?: string | null
+          hourly_rate?: number | null
           id?: string
           intern_id?: string | null
+          last_payment_date?: string | null
+          payment_schedule?: string | null
+          payment_type?: Database["public"]["Enums"]["payment_type"] | null
           start_date?: string | null
           status?: string | null
           terms?: string
+          total_hours_logged?: number | null
         }
         Relationships: [
           {
@@ -266,6 +287,108 @@ export type Database = {
           },
         ]
       }
+      milestones: {
+        Row: {
+          amount: number
+          contract_id: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          status: string | null
+          title: string
+        }
+        Insert: {
+          amount: number
+          contract_id?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          status?: string | null
+          title: string
+        }
+        Update: {
+          amount?: number
+          contract_id?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestones_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          contract_id: string | null
+          created_at: string
+          id: string
+          milestone_id: string | null
+          payment_date: string | null
+          payment_method: string | null
+          status: string | null
+          time_log_id: string | null
+          transaction_id: string | null
+        }
+        Insert: {
+          amount: number
+          contract_id?: string | null
+          created_at?: string
+          id?: string
+          milestone_id?: string | null
+          payment_date?: string | null
+          payment_method?: string | null
+          status?: string | null
+          time_log_id?: string | null
+          transaction_id?: string | null
+        }
+        Update: {
+          amount?: number
+          contract_id?: string | null
+          created_at?: string
+          id?: string
+          milestone_id?: string | null
+          payment_date?: string | null
+          payment_method?: string | null
+          status?: string | null
+          time_log_id?: string | null
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_time_log_id_fkey"
+            columns: ["time_log_id"]
+            isOneToOne: false
+            referencedRelation: "time_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posting_drafts: {
         Row: {
           budget_range: string | null
@@ -403,6 +526,47 @@ export type Database = {
           },
         ]
       }
+      time_logs: {
+        Row: {
+          contract_id: string | null
+          created_at: string
+          description: string | null
+          end_time: string | null
+          hours_logged: number | null
+          id: string
+          start_time: string
+          status: string | null
+        }
+        Insert: {
+          contract_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string | null
+          hours_logged?: number | null
+          id?: string
+          start_time: string
+          status?: string | null
+        }
+        Update: {
+          contract_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string | null
+          hours_logged?: number | null
+          id?: string
+          start_time?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_logs_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -411,7 +575,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      contract_status:
+        | "draft"
+        | "pending"
+        | "active"
+        | "completed"
+        | "cancelled"
+      payment_type: "fixed" | "hourly"
     }
     CompositeTypes: {
       [_ in never]: never

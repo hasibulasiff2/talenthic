@@ -15,6 +15,12 @@ import PricingPage from "./pages/Pricing";
 import PostingTypePage from "./pages/post/Index";
 import PostInternshipPage from "./pages/post/internship/Index";
 import PostGigPage from "./pages/post/gig/Index";
+import CollaborationHub from "./pages/collaboration/Index";
+import ContractDetails from "./pages/collaboration/ContractDetails";
+import TimeTracking from "./pages/collaboration/TimeTracking";
+import Milestones from "./pages/collaboration/Milestones";
+import Payments from "./pages/collaboration/Payments";
+import CreateContract from "./pages/collaboration/CreateContract";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +43,12 @@ const App = () => (
           <Route path="/post" element={<PostingTypePage />} />
           <Route path="/post/internship" element={<PostInternshipPage />} />
           <Route path="/post/gig" element={<PostGigPage />} />
+          <Route path="/collaboration" element={<CollaborationHub />} />
+          <Route path="/collaboration/contracts/create" element={<CreateContract />} />
+          <Route path="/collaboration/contracts/:id" element={<ContractDetails />} />
+          <Route path="/collaboration/contracts/:id/time" element={<TimeTracking />} />
+          <Route path="/collaboration/contracts/:id/milestones" element={<Milestones />} />
+          <Route path="/collaboration/contracts/:id/payments" element={<Payments />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
