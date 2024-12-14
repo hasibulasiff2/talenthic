@@ -1,22 +1,28 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { DollarSign } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
-import { Button } from "@/components/ui/button";
+import { PaymentForm } from "@/components/payments/PaymentForm";
+import { PaymentHistory } from "@/components/payments/PaymentHistory";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
-const Payments = () => {
+const PaymentsPage = () => {
   const { id: contractId } = useParams();
-  const navigate = useNavigate();
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
 
   const { data: contract } = useQuery({
     queryKey: ["contract", contractId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("contracts")
-        .select("*, company:companies(*), intern:profiles(*)")
+        .select(`
+          *,
+          company:companies(*),
+          milestones(*)
+        `)
         .eq("id", contractId)
         .single();
 
@@ -25,23 +31,9 @@ const Payments = () => {
     },
   });
 
-  const { data: payments } = useQuery({
-    queryKey: ["payments", contractId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("payments")
-        .select(`
-          *,
-          milestone:milestones(*),
-          time_log:time_logs(*)
-        `)
-        .eq("contract_id", contractId)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-  });
+  const totalAmount = contract?.payment_type === "fixed" 
+    ? contract.fixed_amount 
+    : contract?.milestones?.reduce((sum, milestone) => sum + (milestone.amount || 0), 0) || 0;
 
   return (
     <div className="min-h-screen bg-accent">
@@ -54,100 +46,62 @@ const Payments = () => {
                 Payments
               </h1>
               <p className="text-muted-foreground">
-                Payment history for {contract?.title}
+                Manage payments for {contract?.title}
               </p>
             </div>
-            <Button
-              variant="outline"
-              onClick={() => navigate(`/collaboration/contracts/${contractId}`)}
-            >
-              Back to Contract
-            </Button>
+            <Dialog open={showPaymentForm} onOpenChange={setShowPaymentForm}>
+              <DialogTrigger asChild>
+                <Button>Make Payment</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Make Payment</DialogTitle>
+                </DialogHeader>
+                <PaymentForm
+                  contractId={contractId || ""}
+                  amount={totalAmount}
+                  onSuccess={() => setShowPaymentForm(false)}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid gap-6">
             <Card>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <DollarSign className="w-6 h-6 mx-auto mb-2 text-primary" />
-                  <div className="text-sm text-muted-foreground">Total Amount</div>
-                  <div className="font-medium">
-                    ${contract?.fixed_amount || contract?.hourly_rate || 0}
-                    {contract?.payment_type === "hourly" && "/hr"}
+              <CardHeader>
+                <CardTitle>Payment Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Contract Type</p>
+                    <p className="text-lg font-semibold capitalize">
+                      {contract?.payment_type}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Amount</p>
+                    <p className="text-lg font-semibold">
+                      ${totalAmount}
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <DollarSign className="w-6 h-6 mx-auto mb-2 text-primary" />
-                  <div className="text-sm text-muted-foreground">Total Paid</div>
-                  <div className="font-medium">
-                    ${payments?.reduce((sum, p) => sum + Number(p.amount), 0) || 0}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <DollarSign className="w-6 h-6 mx-auto mb-2 text-primary" />
-                  <div className="text-sm text-muted-foreground">
-                    Payment Method
-                  </div>
-                  <div className="font-medium">
-                    {contract?.payment_type === "fixed" ? "Fixed Price" : "Hourly Rate"}
-                  </div>
-                </div>
+              <CardHeader>
+                <CardTitle>Payment History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PaymentHistory contractId={contractId || ""} />
               </CardContent>
             </Card>
           </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment History</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {payments?.map((payment) => (
-                  <div
-                    key={payment.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
-                  >
-                    <div>
-                      <div className="font-medium">
-                        Payment for{" "}
-                        {payment.milestone
-                          ? payment.milestone.title
-                          : payment.time_log
-                          ? `${payment.time_log.hours_logged} hours`
-                          : "Contract"}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(payment.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium">${payment.amount}</div>
-                      <Badge variant="outline">{payment.status}</Badge>
-                    </div>
-                  </div>
-                ))}
-                {(!payments || payments.length === 0) && (
-                  <p className="text-center text-muted-foreground py-8">
-                    No payments recorded yet
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </main>
     </div>
   );
 };
 
-export default Payments;
+export default PaymentsPage;
