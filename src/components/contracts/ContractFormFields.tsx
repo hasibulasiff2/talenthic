@@ -81,14 +81,14 @@ export const ContractFormFields = ({ form }: ContractFormFieldsProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Contract Template (Optional)</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value || "none"}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a template" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="">No template</SelectItem>
+                <SelectItem value="none">No template</SelectItem>
                 {templates?.map((template) => (
                   <SelectItem key={template.id} value={template.id}>
                     {template.name}
