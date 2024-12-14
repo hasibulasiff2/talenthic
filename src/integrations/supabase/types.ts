@@ -337,6 +337,33 @@ export type Database = {
           },
         ]
       }
+      currencies: {
+        Row: {
+          code: string
+          exchange_rate: number
+          is_active: boolean
+          last_updated: string | null
+          name: string
+          symbol: string
+        }
+        Insert: {
+          code: string
+          exchange_rate?: number
+          is_active?: boolean
+          last_updated?: string | null
+          name: string
+          symbol: string
+        }
+        Update: {
+          code?: string
+          exchange_rate?: number
+          is_active?: boolean
+          last_updated?: string | null
+          name?: string
+          symbol?: string
+        }
+        Relationships: []
+      }
       gigs: {
         Row: {
           application_deadline: string | null
@@ -531,6 +558,10 @@ export type Database = {
           created_at: string
           id: string
           message: string
+          notification_type:
+            | Database["public"]["Enums"]["notification_type"]
+            | null
+          priority: string | null
           read: boolean | null
           title: string
           type: string
@@ -540,6 +571,10 @@ export type Database = {
           created_at?: string
           id?: string
           message: string
+          notification_type?:
+            | Database["public"]["Enums"]["notification_type"]
+            | null
+          priority?: string | null
           read?: boolean | null
           title: string
           type: string
@@ -549,6 +584,10 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string
+          notification_type?:
+            | Database["public"]["Enums"]["notification_type"]
+            | null
+          priority?: string | null
           read?: boolean | null
           title?: string
           type?: string
@@ -793,33 +832,46 @@ export type Database = {
       }
       tasks: {
         Row: {
+          assigned_to: string | null
           contract_id: string | null
           created_at: string
           description: string | null
           due_date: string | null
           id: string
+          priority: string | null
           status: string | null
           title: string
         }
         Insert: {
+          assigned_to?: string | null
           contract_id?: string | null
           created_at?: string
           description?: string | null
           due_date?: string | null
           id?: string
+          priority?: string | null
           status?: string | null
           title: string
         }
         Update: {
+          assigned_to?: string | null
           contract_id?: string | null
           created_at?: string
           description?: string | null
           due_date?: string | null
           id?: string
+          priority?: string | null
           status?: string | null
           title?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tasks_contract_id_fkey"
             columns: ["contract_id"]
@@ -890,6 +942,12 @@ export type Database = {
         | "fixed_price"
         | "hourly_rate"
         | "milestone_based"
+      notification_type:
+        | "message"
+        | "payment"
+        | "milestone"
+        | "task"
+        | "contract"
       payment_status: "pending" | "processing" | "completed" | "failed"
       payment_type: "fixed" | "hourly"
     }

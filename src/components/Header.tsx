@@ -1,101 +1,44 @@
 import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "./ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const Header = () => {
+  const { session } = useAuth();
+
   return (
-    <header className="border-b bg-white sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="text-2xl font-bold text-secondary">
-          Talenthic
-        </Link>
-
-        {/* Navigation */}
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Discover</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-4 w-[400px]">
-                  <NavigationMenuLink asChild>
-                    <Link to="/internships" className="block p-2 hover:bg-accent rounded-md">
-                      Internships
-                    </Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link to="/gigs" className="block p-2 hover:bg-accent rounded-md">
-                      Gigs
-                    </Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link to="/featured" className="block p-2 hover:bg-accent rounded-md">
-                      Featured
-                    </Link>
-                  </NavigationMenuLink>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>For Job Seekers</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-4 w-[400px]">
-                  <NavigationMenuLink asChild>
-                    <Link to="/overview" className="block p-2 hover:bg-accent rounded-md">
-                      Overview
-                    </Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link to="/remote" className="block p-2 hover:bg-accent rounded-md">
-                      Remote Jobs
-                    </Link>
-                  </NavigationMenuLink>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>For Companies</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-4 w-[400px]">
-                  <NavigationMenuLink asChild>
-                    <Link to="/company/dashboard" className="block p-2 hover:bg-accent rounded-md">
-                      Dashboard
-                    </Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link to="/post" className="block p-2 hover:bg-accent rounded-md">
-                      Post Opportunity
-                    </Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link to="/pricing" className="block p-2 hover:bg-accent rounded-md">
-                      Pricing
-                    </Link>
-                  </NavigationMenuLink>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link to="/collaboration" className="block px-4 py-2 hover:text-primary">
-                  Collaboration Hub
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        {/* Auth Buttons */}
-        <div className="flex items-center gap-4">
-          <Button variant="ghost">Log In</Button>
-          <Button>Sign Up</Button>
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <div className="mr-4 flex">
+          <Link to="/" className="mr-6 flex items-center space-x-2">
+            <span className="font-bold">Talenthic</span>
+          </Link>
+          <nav className="flex items-center space-x-6 text-sm font-medium">
+            <Link to="/internships" className="transition-colors hover:text-foreground/80">
+              Internships
+            </Link>
+            <Link to="/gigs" className="transition-colors hover:text-foreground/80">
+              Gigs
+            </Link>
+            <Link to="/collaboration" className="transition-colors hover:text-foreground/80">
+              Collaboration
+            </Link>
+          </nav>
+        </div>
+        <div className="flex-1" />
+        <div className="flex items-center space-x-2">
+          {session ? (
+            <>
+              <NotificationBell />
+              <Button variant="ghost" size="sm">
+                Profile
+              </Button>
+            </>
+          ) : (
+            <Link to="/login">
+              <Button size="sm">Login</Button>
+            </Link>
+          )}
         </div>
       </div>
     </header>
