@@ -35,41 +35,45 @@ const queryClient = new QueryClient({
   },
 });
 
-const App: React.FC = () => {
+const AppContent = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AuthProvider>
-              <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/" element={<Index />} />
-                <Route path="/internships" element={<InternshipsPage />} />
-                <Route path="/gigs" element={<GigsPage />} />
-                <Route path="/company/dashboard" element={<CompanyDashboard />} />
-                <Route path="/featured" element={<FeaturedPage />} />
-                <Route path="/overview" element={<OverviewPage />} />
-                <Route path="/remote" element={<RemotePage />} />
-                <Route path="/hire" element={<HirePage />} />
-                <Route path="/pricing" element={<PricingPage />} />
-                <Route path="/post" element={<PostingTypePage />} />
-                <Route path="/post/internship" element={<PostInternshipPage />} />
-                <Route path="/post/gig" element={<PostGigPage />} />
-                <Route path="/collaboration" element={<CollaborationHub />} />
-                <Route path="/collaboration/contracts/create" element={<CreateContract />} />
-                <Route path="/collaboration/contracts/:id" element={<ContractDetails />} />
-                <Route path="/collaboration/contracts/:id/time" element={<TimeTracking />} />
-                <Route path="/collaboration/contracts/:id/milestones" element={<Milestones />} />
-                <Route path="/collaboration/contracts/:id/payments" element={<Payments />} />
-              </Routes>
-            </AuthProvider>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/internships" element={<InternshipsPage />} />
+            <Route path="/gigs" element={<GigsPage />} />
+            <Route path="/company/dashboard" element={<CompanyDashboard />} />
+            <Route path="/featured" element={<FeaturedPage />} />
+            <Route path="/overview" element={<OverviewPage />} />
+            <Route path="/remote" element={<RemotePage />} />
+            <Route path="/hire" element={<HirePage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/post" element={<PostingTypePage />} />
+            <Route path="/post/internship" element={<PostInternshipPage />} />
+            <Route path="/post/gig" element={<PostGigPage />} />
+            <Route path="/collaboration" element={<CollaborationHub />} />
+            <Route path="/collaboration/contracts/create" element={<CreateContract />} />
+            <Route path="/collaboration/contracts/:id" element={<ContractDetails />} />
+            <Route path="/collaboration/contracts/:id/time" element={<TimeTracking />} />
+            <Route path="/collaboration/contracts/:id/milestones" element={<Milestones />} />
+            <Route path="/collaboration/contracts/:id/payments" element={<Payments />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </TooltipProvider>
+  );
+};
+
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppContent />
+    </QueryClientProvider>
   );
 };
 
