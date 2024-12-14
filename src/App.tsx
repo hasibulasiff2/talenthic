@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,40 +25,52 @@ import Milestones from "./pages/collaboration/Milestones";
 import Payments from "./pages/collaboration/Payments";
 import CreateContract from "./pages/collaboration/CreateContract";
 
-const queryClient = new QueryClient();
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<Index />} />
-            <Route path="/internships" element={<InternshipsPage />} />
-            <Route path="/gigs" element={<GigsPage />} />
-            <Route path="/company/dashboard" element={<CompanyDashboard />} />
-            <Route path="/featured" element={<FeaturedPage />} />
-            <Route path="/overview" element={<OverviewPage />} />
-            <Route path="/remote" element={<RemotePage />} />
-            <Route path="/hire" element={<HirePage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/post" element={<PostingTypePage />} />
-            <Route path="/post/internship" element={<PostInternshipPage />} />
-            <Route path="/post/gig" element={<PostGigPage />} />
-            <Route path="/collaboration" element={<CollaborationHub />} />
-            <Route path="/collaboration/contracts/create" element={<CreateContract />} />
-            <Route path="/collaboration/contracts/:id" element={<ContractDetails />} />
-            <Route path="/collaboration/contracts/:id/time" element={<TimeTracking />} />
-            <Route path="/collaboration/contracts/:id/milestones" element={<Milestones />} />
-            <Route path="/collaboration/contracts/:id/payments" element={<Payments />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App: React.FC = () => {
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/" element={<Index />} />
+                <Route path="/internships" element={<InternshipsPage />} />
+                <Route path="/gigs" element={<GigsPage />} />
+                <Route path="/company/dashboard" element={<CompanyDashboard />} />
+                <Route path="/featured" element={<FeaturedPage />} />
+                <Route path="/overview" element={<OverviewPage />} />
+                <Route path="/remote" element={<RemotePage />} />
+                <Route path="/hire" element={<HirePage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/post" element={<PostingTypePage />} />
+                <Route path="/post/internship" element={<PostInternshipPage />} />
+                <Route path="/post/gig" element={<PostGigPage />} />
+                <Route path="/collaboration" element={<CollaborationHub />} />
+                <Route path="/collaboration/contracts/create" element={<CreateContract />} />
+                <Route path="/collaboration/contracts/:id" element={<ContractDetails />} />
+                <Route path="/collaboration/contracts/:id/time" element={<TimeTracking />} />
+                <Route path="/collaboration/contracts/:id/milestones" element={<Milestones />} />
+                <Route path="/collaboration/contracts/:id/payments" element={<Payments />} />
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;
