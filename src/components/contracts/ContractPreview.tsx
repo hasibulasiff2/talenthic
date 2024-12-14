@@ -20,6 +20,14 @@ export const ContractPreview = ({
   onBack,
   onConfirm,
 }: ContractPreviewProps) => {
+  const contractTypes = {
+    standard: "Standard Contract",
+    nda: "Non-Disclosure Agreement",
+    fixed_price: "Fixed Price Contract",
+    hourly_rate: "Hourly Rate Contract",
+    milestone_based: "Milestone Based Contract",
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -35,7 +43,9 @@ export const ContractPreview = ({
       <Card>
         <CardHeader>
           <CardTitle>{data.title}</CardTitle>
-          <CardDescription>Contract Details</CardDescription>
+          <CardDescription>
+            {contractTypes[data.type]} {data.requires_signature && "• Requires Signature"}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>

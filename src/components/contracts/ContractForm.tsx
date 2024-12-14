@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { ContractFormFields } from "./ContractFormFields";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ContractPreview } from "./ContractPreview";
 import { ContractFormData } from "@/types/contracts";
+import { useQuery } from "@tanstack/react-query";
 
 const ContractForm = () => {
   const navigate = useNavigate();
@@ -23,8 +24,32 @@ const ContractForm = () => {
       terms: "",
       payment_type: "fixed",
       currency: "USD",
+      type: "standard",
+      requires_signature: true,
     },
   });
+
+  const { data: selectedTemplate } = useQuery({
+    queryKey: ["contract-template", form.watch("template_id")],
+    queryFn: async () => {
+      if (!form.watch("template_id")) return null;
+      const { data, error } = await supabase
+        .from("contract_templates")
+        .select("*")
+        .eq("id", form.watch("template_id"))
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!form.watch("template_id"),
+  });
+
+  useEffect(() => {
+    if (selectedTemplate) {
+      form.setValue("terms", selectedTemplate.content);
+      form.setValue("type", selectedTemplate.type);
+    }
+  }, [selectedTemplate, form]);
 
   const onSubmit = async (data: ContractFormData) => {
     setIsSubmitting(true);
@@ -69,6 +94,9 @@ const ContractForm = () => {
         duration: data.duration,
         currency: data.currency,
         payment_schedule: data.payment_schedule,
+        template_id: data.template_id || null,
+        type: data.type,
+        requires_signature: data.requires_signature,
         status: "draft",
       });
 

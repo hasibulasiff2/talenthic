@@ -99,8 +99,137 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_signatures: {
+        Row: {
+          contract_id: string
+          id: string
+          ip_address: string | null
+          signature_data: string
+          signed_at: string
+          signer_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          contract_id: string
+          id?: string
+          ip_address?: string | null
+          signature_data: string
+          signed_at?: string
+          signer_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          contract_id?: string
+          id?: string
+          ip_address?: string | null
+          signature_data?: string
+          signed_at?: string
+          signer_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_signatures_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contract_signatures_signer_id_fkey"
+            columns: ["signer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contract_templates: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          type: Database["public"]["Enums"]["contract_type"]
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          type: Database["public"]["Enums"]["contract_type"]
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          type?: Database["public"]["Enums"]["contract_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contract_versions: {
+        Row: {
+          changes: Json
+          contract_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          version_number: number
+        }
+        Insert: {
+          changes: Json
+          contract_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          version_number: number
+        }
+        Update: {
+          changes?: Json
+          contract_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_versions_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contract_versions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
+          all_signed: boolean | null
           company_id: string | null
           created_at: string
           currency: string | null
@@ -114,13 +243,19 @@ export type Database = {
           last_payment_date: string | null
           payment_schedule: string | null
           payment_type: Database["public"]["Enums"]["payment_type"] | null
+          requires_signature: boolean | null
+          shared_with: string[] | null
           start_date: string | null
           status: string | null
+          template_id: string | null
           terms: string
           title: string | null
           total_hours_logged: number | null
+          type: Database["public"]["Enums"]["contract_type"] | null
+          version: number | null
         }
         Insert: {
+          all_signed?: boolean | null
           company_id?: string | null
           created_at?: string
           currency?: string | null
@@ -134,13 +269,19 @@ export type Database = {
           last_payment_date?: string | null
           payment_schedule?: string | null
           payment_type?: Database["public"]["Enums"]["payment_type"] | null
+          requires_signature?: boolean | null
+          shared_with?: string[] | null
           start_date?: string | null
           status?: string | null
+          template_id?: string | null
           terms: string
           title?: string | null
           total_hours_logged?: number | null
+          type?: Database["public"]["Enums"]["contract_type"] | null
+          version?: number | null
         }
         Update: {
+          all_signed?: boolean | null
           company_id?: string | null
           created_at?: string
           currency?: string | null
@@ -154,11 +295,16 @@ export type Database = {
           last_payment_date?: string | null
           payment_schedule?: string | null
           payment_type?: Database["public"]["Enums"]["payment_type"] | null
+          requires_signature?: boolean | null
+          shared_with?: string[] | null
           start_date?: string | null
           status?: string | null
+          template_id?: string | null
           terms?: string
           title?: string | null
           total_hours_logged?: number | null
+          type?: Database["public"]["Enums"]["contract_type"] | null
+          version?: number | null
         }
         Relationships: [
           {
@@ -180,6 +326,13 @@ export type Database = {
             columns: ["intern_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "contract_templates"
             referencedColumns: ["id"]
           },
         ]
@@ -731,6 +884,12 @@ export type Database = {
         | "active"
         | "completed"
         | "cancelled"
+      contract_type:
+        | "standard"
+        | "nda"
+        | "fixed_price"
+        | "hourly_rate"
+        | "milestone_based"
       payment_status: "pending" | "processing" | "completed" | "failed"
       payment_type: "fixed" | "hourly"
     }
