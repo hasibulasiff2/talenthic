@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Building2, Clock, DollarSign } from "lucide-react";
 import Header from "@/components/Header";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ApplicationForm } from "@/components/applications/ApplicationForm";
+import { ApplicationStatus } from "@/components/applications/ApplicationStatus";
 
 type Company = {
   name: string;
@@ -24,6 +28,8 @@ type GigResponse = {
 }
 
 const GigsPage = () => {
+  const [selectedGigId, setSelectedGigId] = useState<string | null>(null);
+
   const { data: gigs, isLoading } = useQuery({
     queryKey: ["gigs"],
     queryFn: async () => {
@@ -122,13 +128,31 @@ const GigsPage = () => {
                         ))}
                       </div>
                     )}
-                    <Button className="w-full">Apply Now</Button>
+                    <ApplicationStatus internshipId={gig.id} />
+                    <Button 
+                      className="w-full"
+                      onClick={() => setSelectedGigId(gig.id)}
+                    >
+                      Apply Now
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         )}
+
+        <Dialog open={!!selectedGigId} onOpenChange={() => setSelectedGigId(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Submit Application</DialogTitle>
+            </DialogHeader>
+            <ApplicationForm 
+              internshipId={selectedGigId || undefined}
+              onSuccess={() => setSelectedGigId(null)}
+            />
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );

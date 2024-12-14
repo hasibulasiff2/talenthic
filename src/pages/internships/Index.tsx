@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Building2, MapPin, Clock, DollarSign } from "lucide-react";
 import Header from "@/components/Header";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ApplicationForm } from "@/components/applications/ApplicationForm";
+import { ApplicationStatus } from "@/components/applications/ApplicationStatus";
 
 type Company = {
   name: string;
@@ -21,10 +25,12 @@ type InternshipResponse = {
   created_at: string;
   requirements: string | null;
   status: string | null;
-  company: Company; // Changed from companies to company since it's a single company
+  company: Company;
 }
 
 const InternshipsPage = () => {
+  const [selectedInternshipId, setSelectedInternshipId] = useState<string | null>(null);
+
   const { data: internships, isLoading } = useQuery({
     queryKey: ["internships"],
     queryFn: async () => {
@@ -97,7 +103,9 @@ const InternshipsPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{internship.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {internship.description}
+                    </p>
                     <div className="grid grid-cols-2 gap-4">
                       {internship.location && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -118,13 +126,31 @@ const InternshipsPage = () => {
                         </div>
                       )}
                     </div>
-                    <Button className="w-full">Apply Now</Button>
+                    <ApplicationStatus internshipId={internship.id} />
+                    <Button 
+                      className="w-full"
+                      onClick={() => setSelectedInternshipId(internship.id)}
+                    >
+                      Apply Now
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         )}
+
+        <Dialog open={!!selectedInternshipId} onOpenChange={() => setSelectedInternshipId(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Submit Application</DialogTitle>
+            </DialogHeader>
+            <ApplicationForm 
+              internshipId={selectedInternshipId || undefined}
+              onSuccess={() => setSelectedInternshipId(null)}
+            />
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );

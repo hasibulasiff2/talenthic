@@ -373,6 +373,44 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -381,7 +419,10 @@ export type Database = {
           id: string
           milestone_id: string | null
           payment_date: string | null
+          payment_gateway: string | null
+          payment_gateway_fee: number | null
           payment_method: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"] | null
           status: string | null
           time_log_id: string | null
           transaction_id: string | null
@@ -393,7 +434,10 @@ export type Database = {
           id?: string
           milestone_id?: string | null
           payment_date?: string | null
+          payment_gateway?: string | null
+          payment_gateway_fee?: number | null
           payment_method?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
           status?: string | null
           time_log_id?: string | null
           transaction_id?: string | null
@@ -405,7 +449,10 @@ export type Database = {
           id?: string
           milestone_id?: string | null
           payment_date?: string | null
+          payment_gateway?: string | null
+          payment_gateway_fee?: number | null
           payment_method?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
           status?: string | null
           time_log_id?: string | null
           transaction_id?: string | null
@@ -684,6 +731,7 @@ export type Database = {
         | "active"
         | "completed"
         | "cancelled"
+      payment_status: "pending" | "processing" | "completed" | "failed"
       payment_type: "fixed" | "hourly"
     }
     CompositeTypes: {
