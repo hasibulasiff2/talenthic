@@ -1,53 +1,56 @@
-import { useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
-type RealtimeConfig = {
+type RealtimeEvent = {
   table: string;
-  event?: 'INSERT' | 'UPDATE' | 'DELETE';
-  filter?: string;
+  schema: string;
+  eventType: "INSERT" | "UPDATE" | "DELETE";
+  onEvent?: (payload: any) => void;
 };
 
-export const useRealtimeUpdates = (
-  config: RealtimeConfig,
-  onUpdate: (payload: RealtimePostgresChangesPayload<any>) => void
-) => {
-  const { toast } = useToast();
-
+export const useRealtimeUpdates = ({ table, schema, eventType, onEvent }: RealtimeEvent) => {
   useEffect(() => {
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes' as const,
-        {
-          event: config.event || '*',
-          schema: 'public',
-          table: config.table,
-          filter: config.filter,
-        },
-        (payload) => {
-          console.log('Realtime update:', payload);
-          onUpdate(payload);
-          
-          // Show toast notification for specific events
-          if (config.table === 'messages') {
-            toast({
-              title: 'New Message',
-              description: 'You have received a new message',
-            });
-          } else if (config.table === 'payments') {
-            toast({
-              title: 'Payment Update',
-              description: 'There has been an update to a payment',
+    let channel: RealtimeChannel;
+
+    const setupRealtimeSubscription = async () => {
+      channel = supabase
+        .channel('db-changes')
+        .on(
+          'postgres_changes' as const,
+          {
+            event: eventType,
+            schema: schema,
+            table: table,
+          },
+          (payload) => {
+            // Call the custom event handler if provided
+            if (onEvent) {
+              onEvent(payload);
+            }
+
+            // Show toast notification based on event type
+            const eventMessages = {
+              INSERT: "New item added",
+              UPDATE: "Item updated",
+              DELETE: "Item removed",
+            };
+
+            toast(eventMessages[eventType], {
+              description: `Changes in ${table}`,
             });
           }
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
+    };
+
+    setupRealtimeSubscription();
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
-  }, [config.table, config.event, config.filter, onUpdate, toast]);
+  }, [table, schema, eventType, onEvent]);
 };
