@@ -35,7 +35,6 @@ const CollaborationHub = () => {
     },
   });
 
-  // Set up realtime updates
   useRealtimeUpdates(
     { table: "contracts" },
     () => {

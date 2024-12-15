@@ -3,14 +3,15 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
 
-type RealtimeEvent = {
+type RealtimeConfig = {
   table: string;
-  schema: string;
-  eventType: "INSERT" | "UPDATE" | "DELETE";
-  onEvent?: (payload: any) => void;
+  filter?: string;
 };
 
-export const useRealtimeUpdates = ({ table, schema, eventType, onEvent }: RealtimeEvent) => {
+export const useRealtimeUpdates = (
+  config: RealtimeConfig,
+  onUpdate?: () => void
+) => {
   useEffect(() => {
     let channel: RealtimeChannel;
 
@@ -18,27 +19,19 @@ export const useRealtimeUpdates = ({ table, schema, eventType, onEvent }: Realti
       channel = supabase
         .channel('db-changes')
         .on(
-          'postgres_changes' as const,
+          'postgres_changes',
           {
-            event: eventType,
-            schema: schema,
-            table: table,
+            event: '*',
+            schema: 'public',
+            table: config.table,
+            filter: config.filter,
           },
           (payload) => {
-            // Call the custom event handler if provided
-            if (onEvent) {
-              onEvent(payload);
-            }
+            console.log('Realtime update:', payload);
+            onUpdate?.();
 
-            // Show toast notification based on event type
-            const eventMessages = {
-              INSERT: "New item added",
-              UPDATE: "Item updated",
-              DELETE: "Item removed",
-            };
-
-            toast(eventMessages[eventType], {
-              description: `Changes in ${table}`,
+            toast("Update received", {
+              description: `Changes in ${config.table}`,
             });
           }
         )
@@ -52,5 +45,5 @@ export const useRealtimeUpdates = ({ table, schema, eventType, onEvent }: Realti
         supabase.removeChannel(channel);
       }
     };
-  }, [table, schema, eventType, onEvent]);
+  }, [config.table, config.filter, onUpdate]);
 };
