@@ -3,12 +3,21 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2, MapPin, Clock, DollarSign, Search, Filter } from "lucide-react";
+import { Building2, MapPin, Clock, DollarSign, Search } from "lucide-react";
 import Header from "@/components/Header";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ApplicationForm } from "@/components/applications/ApplicationForm";
 import { ApplicationStatus } from "@/components/applications/ApplicationStatus";
 import { Input } from "@/components/ui/input";
+import { SearchFilters } from "@/components/search/SearchFilters";
+
+interface Filters {
+  search: string;
+  category?: string;
+  location?: string;
+  duration?: string;
+  priceRange?: string;
+}
 
 type Company = {
   name: string;
@@ -77,12 +86,18 @@ const dummyInternships = [
 
 const InternshipsPage = () => {
   const [selectedInternshipId, setSelectedInternshipId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<Filters>({
+    search: "",
+    category: undefined,
+    location: undefined,
+    duration: undefined,
+    priceRange: undefined,
+  });
 
   const { data: internships, isLoading } = useQuery({
-    queryKey: ["internships"],
+    queryKey: ["internships", filters],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("internships")
         .select(`
           *,
@@ -91,20 +106,51 @@ const InternshipsPage = () => {
             logo_url
           )
         `)
-        .eq("status", "active")
-        .returns<InternshipResponse[]>();
+        .eq("status", "active");
 
+      if (filters.category) {
+        query = query.eq("category", filters.category);
+      }
+      if (filters.location) {
+        query = query.eq("location", filters.location);
+      }
+      if (filters.duration) {
+        query = query.eq("duration", filters.duration);
+      }
+      if (filters.priceRange) {
+        query = query.eq("salary_range", filters.priceRange);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
-      // For development, return dummy data if no data in database
       return data?.length ? data : dummyInternships;
     },
   });
 
-  const filteredInternships = internships?.filter(internship => 
-    internship.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    internship.company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (internship.location && internship.location.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredInternships = internships?.filter((internship) => {
+    const searchLower = filters.search.toLowerCase();
+    const matchesSearch =
+      !filters.search ||
+      internship.title.toLowerCase().includes(searchLower) ||
+      internship.company.name.toLowerCase().includes(searchLower) ||
+      (internship.location && internship.location.toLowerCase().includes(searchLower));
+
+    return matchesSearch;
+  });
+
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      search: "",
+      category: undefined,
+      location: undefined,
+      duration: undefined,
+      priceRange: undefined,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-accent">
@@ -115,100 +161,101 @@ const InternshipsPage = () => {
             <h1 className="text-3xl font-bold text-secondary mb-2">Internship Opportunities</h1>
             <p className="text-muted-foreground">Discover your next career opportunity</p>
           </div>
-          <div className="flex gap-4">
-            <Button variant="outline">
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
-            </Button>
-            <Button>Post Internship</Button>
-          </div>
+          <Button>Post Internship</Button>
         </div>
 
-        <div className="mb-6">
+        <div className="space-y-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search internships by title, company, or location..."
               className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={filters.search}
+              onChange={(e) => handleFilterChange("search", e.target.value)}
             />
           </div>
-        </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="animate-pulse">
-                <CardHeader className="h-32 bg-gray-200" />
-                <CardContent className="space-y-4">
-                  <div className="h-4 bg-gray-200 rounded w-3/4" />
-                  <div className="h-4 bg-gray-200 rounded w-1/2" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredInternships?.map((internship) => (
-              <Card key={internship.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center gap-4 mb-2">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      {internship.company?.logo_url ? (
-                        <img
-                          src={internship.company.logo_url}
-                          alt={internship.company.name}
-                          className="w-8 h-8 object-contain"
-                        />
-                      ) : (
-                        <Building2 className="w-6 h-6 text-gray-400" />
-                      )}
+          <SearchFilters
+            type="internships"
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onClearFilters={clearFilters}
+          />
+
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardHeader className="h-32 bg-gray-200" />
+                  <CardContent className="space-y-4">
+                    <div className="h-4 bg-gray-200 rounded w-3/4" />
+                    <div className="h-4 bg-gray-200 rounded w-1/2" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredInternships?.map((internship) => (
+                <Card key={internship.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                        {internship.company?.logo_url ? (
+                          <img
+                            src={internship.company.logo_url}
+                            alt={internship.company.name}
+                            className="w-8 h-8 object-contain"
+                          />
+                        ) : (
+                          <Building2 className="w-6 h-6 text-gray-400" />
+                        )}
+                      </div>
+                      <div>
+                        <CardTitle className="text-xl">{internship.title}</CardTitle>
+                        <CardDescription>{internship.company?.name}</CardDescription>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle className="text-xl">{internship.title}</CardTitle>
-                      <CardDescription>{internship.company?.name}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {internship.description}
+                      </p>
+                      <div className="grid grid-cols-2 gap-4">
+                        {internship.location && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <MapPin className="w-4 h-4" />
+                            <span>{internship.location}</span>
+                          </div>
+                        )}
+                        {internship.duration && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Clock className="w-4 h-4" />
+                            <span>{internship.duration}</span>
+                          </div>
+                        )}
+                        {internship.salary_range && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <DollarSign className="w-4 h-4" />
+                            <span>{internship.salary_range}</span>
+                          </div>
+                        )}
+                      </div>
+                      <ApplicationStatus internshipId={internship.id} />
+                      <Button 
+                        className="w-full"
+                        onClick={() => setSelectedInternshipId(internship.id)}
+                      >
+                        Apply Now
+                      </Button>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {internship.description}
-                    </p>
-                    <div className="grid grid-cols-2 gap-4">
-                      {internship.location && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <MapPin className="w-4 h-4" />
-                          <span>{internship.location}</span>
-                        </div>
-                      )}
-                      {internship.duration && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Clock className="w-4 h-4" />
-                          <span>{internship.duration}</span>
-                        </div>
-                      )}
-                      {internship.salary_range && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <DollarSign className="w-4 h-4" />
-                          <span>{internship.salary_range}</span>
-                        </div>
-                      )}
-                    </div>
-                    <ApplicationStatus internshipId={internship.id} />
-                    <Button 
-                      className="w-full"
-                      onClick={() => setSelectedInternshipId(internship.id)}
-                    >
-                      Apply Now
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
 
         <Dialog open={!!selectedInternshipId} onOpenChange={() => setSelectedInternshipId(null)}>
           <DialogContent>
