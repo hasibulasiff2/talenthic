@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2, MapPin, Clock, DollarSign } from "lucide-react";
+import { Building2, MapPin, Clock, DollarSign, Search, Filter } from "lucide-react";
 import Header from "@/components/Header";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ApplicationForm } from "@/components/applications/ApplicationForm";
 import { ApplicationStatus } from "@/components/applications/ApplicationStatus";
+import { Input } from "@/components/ui/input";
 
 type Company = {
   name: string;
@@ -28,8 +29,55 @@ type InternshipResponse = {
   company: Company;
 }
 
+// Dummy data for development
+const dummyInternships = [
+  {
+    id: "1",
+    title: "Software Development Intern",
+    company: {
+      name: "TechCorp Solutions",
+      logo_url: null
+    },
+    description: "Join our dynamic team and work on cutting-edge projects using React, Node.js, and cloud technologies.",
+    location: "Remote",
+    duration: "6 months",
+    salary_range: "$2000-3000/month",
+    requirements: "Currently pursuing CS degree, knowledge of JavaScript",
+    status: "active"
+  },
+  {
+    id: "2",
+    title: "UI/UX Design Intern",
+    company: {
+      name: "Creative Studios",
+      logo_url: null
+    },
+    description: "Help design beautiful and intuitive user interfaces for our clients' web and mobile applications.",
+    location: "New York, NY",
+    duration: "3 months",
+    salary_range: "$2500-3500/month",
+    requirements: "Design portfolio, Figma experience",
+    status: "active"
+  },
+  {
+    id: "3",
+    title: "Data Science Intern",
+    company: {
+      name: "DataMinds Inc",
+      logo_url: null
+    },
+    description: "Work with big data and machine learning models to derive meaningful insights for our clients.",
+    location: "San Francisco, CA",
+    duration: "4 months",
+    salary_range: "$3000-4000/month",
+    requirements: "Python, SQL, Statistics background",
+    status: "active"
+  }
+];
+
 const InternshipsPage = () => {
   const [selectedInternshipId, setSelectedInternshipId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: internships, isLoading } = useQuery({
     queryKey: ["internships"],
@@ -47,9 +95,16 @@ const InternshipsPage = () => {
         .returns<InternshipResponse[]>();
 
       if (error) throw error;
-      return data;
+      // For development, return dummy data if no data in database
+      return data?.length ? data : dummyInternships;
     },
   });
+
+  const filteredInternships = internships?.filter(internship => 
+    internship.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    internship.company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (internship.location && internship.location.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   return (
     <div className="min-h-screen bg-accent">
@@ -61,8 +116,23 @@ const InternshipsPage = () => {
             <p className="text-muted-foreground">Discover your next career opportunity</p>
           </div>
           <div className="flex gap-4">
-            <Button variant="outline">Filter</Button>
+            <Button variant="outline">
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
+            </Button>
             <Button>Post Internship</Button>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search internships by title, company, or location..."
+              className="pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
         </div>
 
@@ -80,7 +150,7 @@ const InternshipsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {internships?.map((internship) => (
+            {filteredInternships?.map((internship) => (
               <Card key={internship.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center gap-4 mb-2">

@@ -3,11 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2, Clock, DollarSign } from "lucide-react";
+import { Building2, Clock, DollarSign, Search, Filter, Tag } from "lucide-react";
 import Header from "@/components/Header";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ApplicationForm } from "@/components/applications/ApplicationForm";
-import { ApplicationStatus } from "@/components/applications/ApplicationStatus";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 type Company = {
   name: string;
@@ -27,8 +26,51 @@ type GigResponse = {
   company: Company;
 }
 
+// Dummy data for development
+const dummyGigs = [
+  {
+    id: "1",
+    title: "Website Redesign Project",
+    company: {
+      name: "Digital Agency Co",
+      logo_url: null
+    },
+    description: "Looking for a talented web designer to revamp our company website using modern design principles.",
+    budget_range: "$3000-5000",
+    duration: "2 weeks",
+    skills: ["React", "Tailwind CSS", "UI/UX"],
+    status: "open"
+  },
+  {
+    id: "2",
+    title: "Mobile App Development",
+    company: {
+      name: "StartupX",
+      logo_url: null
+    },
+    description: "Need a React Native developer to build a social networking app with real-time features.",
+    budget_range: "$5000-8000",
+    duration: "1 month",
+    skills: ["React Native", "Firebase", "API Integration"],
+    status: "open"
+  },
+  {
+    id: "3",
+    title: "Content Writing for Blog",
+    company: {
+      name: "ContentPro",
+      logo_url: null
+    },
+    description: "Seeking an experienced content writer to create engaging blog posts about technology and innovation.",
+    budget_range: "$500-1000",
+    duration: "1 week",
+    skills: ["Content Writing", "SEO", "Research"],
+    status: "open"
+  }
+];
+
 const GigsPage = () => {
-  const [selectedGigId, setSelectedGigId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: gigs, isLoading } = useQuery({
     queryKey: ["gigs"],
@@ -42,12 +84,20 @@ const GigsPage = () => {
             logo_url
           )
         `)
-        .eq("status", "open");
+        .eq("status", "open")
+        .returns<GigResponse[]>();
 
       if (error) throw error;
-      return data as GigResponse[];
+      // For development, return dummy data if no data in database
+      return data?.length ? data : dummyGigs;
     },
   });
+
+  const filteredGigs = gigs?.filter(gig => 
+    gig.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    gig.company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    gig.skills?.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   return (
     <div className="min-h-screen bg-accent">
@@ -55,12 +105,27 @@ const GigsPage = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-secondary mb-2">Gig Opportunities</h1>
-            <p className="text-muted-foreground">Find your next freelance project</p>
+            <h1 className="text-3xl font-bold text-secondary mb-2">Available Gigs</h1>
+            <p className="text-muted-foreground">Find your next freelance opportunity</p>
           </div>
           <div className="flex gap-4">
-            <Button variant="outline">Filter</Button>
+            <Button variant="outline">
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
+            </Button>
             <Button>Post Gig</Button>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search gigs by title, company, or skills..."
+              className="pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
         </div>
 
@@ -78,7 +143,7 @@ const GigsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {gigs?.map((gig) => (
+            {filteredGigs?.map((gig) => (
               <Card key={gig.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center gap-4 mb-2">
@@ -101,39 +166,35 @@ const GigsPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{gig.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {gig.description}
+                    </p>
                     <div className="grid grid-cols-2 gap-4">
-                      {gig.budget_range && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <DollarSign className="w-4 h-4" />
-                          <span>{gig.budget_range}</span>
-                        </div>
-                      )}
                       {gig.duration && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Clock className="w-4 h-4" />
                           <span>{gig.duration}</span>
                         </div>
                       )}
+                      {gig.budget_range && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <DollarSign className="w-4 h-4" />
+                          <span>{gig.budget_range}</span>
+                        </div>
+                      )}
                     </div>
                     {gig.skills && (
                       <div className="flex flex-wrap gap-2">
-                        {gig.skills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="px-2 py-1 bg-accent rounded-full text-xs"
-                          >
+                        {gig.skills.map((skill, index) => (
+                          <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                            <Tag className="w-3 h-3" />
                             {skill}
-                          </span>
+                          </Badge>
                         ))}
                       </div>
                     )}
-                    <ApplicationStatus internshipId={gig.id} />
-                    <Button 
-                      className="w-full"
-                      onClick={() => setSelectedGigId(gig.id)}
-                    >
-                      Apply Now
+                    <Button className="w-full">
+                      View Details
                     </Button>
                   </div>
                 </CardContent>
@@ -141,18 +202,6 @@ const GigsPage = () => {
             ))}
           </div>
         )}
-
-        <Dialog open={!!selectedGigId} onOpenChange={() => setSelectedGigId(null)}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Submit Application</DialogTitle>
-            </DialogHeader>
-            <ApplicationForm 
-              internshipId={selectedGigId || undefined}
-              onSuccess={() => setSelectedGigId(null)}
-            />
-          </DialogContent>
-        </Dialog>
       </main>
     </div>
   );
