@@ -7,20 +7,20 @@ const Header = () => {
   const { session } = useAuth();
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
+    <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50">
+      <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">Talenthic</span>
+            <span className="font-bold text-xl text-secondary">Talenthic</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link to="/internships" className="transition-colors hover:text-foreground/80">
+            <Link to="/internships" className="text-muted-foreground hover:text-secondary transition-colors">
               Internships
             </Link>
-            <Link to="/gigs" className="transition-colors hover:text-foreground/80">
+            <Link to="/gigs" className="text-muted-foreground hover:text-secondary transition-colors">
               Gigs
             </Link>
-            <Link to="/collaboration" className="transition-colors hover:text-foreground/80">
+            <Link to="/collaboration" className="text-muted-foreground hover:text-secondary transition-colors">
               Collaboration
             </Link>
           </nav>
@@ -30,13 +30,13 @@ const Header = () => {
           {session ? (
             <>
               <NotificationBell />
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-secondary">
                 Profile
               </Button>
             </>
           ) : (
             <Link to="/login">
-              <Button size="sm">Login</Button>
+              <Button size="sm" className="bg-primary hover:bg-primary/90">Login</Button>
             </Link>
           )}
         </div>

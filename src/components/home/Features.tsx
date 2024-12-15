@@ -30,7 +30,7 @@ export const Features = () => {
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="text-center mb-12">
-        <Badge variant="outline" className="mb-4">
+        <Badge variant="outline" className="mb-4 text-primary border-primary/20">
           Platform Features
         </Badge>
         <h2 className="text-3xl font-bold mb-4 text-secondary">
@@ -45,13 +45,13 @@ export const Features = () => {
         {features.map((feature) => (
           <Card
             key={feature.title}
-            className="hover:scale-105 transition-transform duration-300 group bg-gradient-to-br from-white to-accent/30 backdrop-blur-sm border-none shadow-lg"
+            className="hover:scale-105 transition-transform duration-300 group bg-gradient-to-br from-white to-accent border-none shadow-lg"
           >
             <CardContent className="pt-6 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4 group-hover:scale-110 transition-transform">
                 <feature.icon className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+              <h3 className="text-xl font-semibold mb-3 text-secondary group-hover:text-primary transition-colors">
                 {feature.title}
               </h3>
               <p className="text-muted-foreground">{feature.description}</p>
