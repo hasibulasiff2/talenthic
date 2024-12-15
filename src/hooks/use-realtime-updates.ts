@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { RealtimePostgresChangesPayload, RealtimeChannel } from '@supabase/supabase-js';
 
 type RealtimeConfig = {
   table: string;
@@ -19,7 +19,7 @@ export const useRealtimeUpdates = (
     const channel = supabase
       .channel('schema-db-changes')
       .on(
-        'postgres_changes' as const,
+        'postgres_changes',
         {
           event: config.event || '*',
           schema: 'public',
