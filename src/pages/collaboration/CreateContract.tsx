@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -9,12 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { ContractFormFields } from "@/components/contracts/ContractFormFields";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ContractPreview } from "@/components/contracts/ContractPreview";
-import { ContractFormData } from "@/types/contracts";
+import { ContractFormData, ContractType } from "@/types/contracts";
 import { useQuery } from "@tanstack/react-query";
 import { ContractTypeStep } from "@/components/contracts/wizard/ContractTypeStep";
 import { TemplateStep } from "@/components/contracts/wizard/TemplateStep";
 import { ContractFormStep } from "@/components/contracts/wizard/ContractFormStep";
 import { Steps, Step } from "@/components/ui/steps";
+import Header from "@/components/Header";
 
 const CreateContract = () => {
   const navigate = useNavigate();
