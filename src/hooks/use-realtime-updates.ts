@@ -19,7 +19,7 @@ export const useRealtimeUpdates = (
     const channel = supabase
       .channel('schema-db-changes')
       .on(
-        'postgres_changes' as const,
+        'postgres_changes',
         {
           event: config.event || '*',
           schema: 'public',
