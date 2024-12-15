@@ -18,7 +18,7 @@ export const useRealtimeUpdates = (
   useEffect(() => {
     const channel = supabase
       .channel('schema-db-changes')
-      .on(
+      .on<string>(
         'postgres_changes',
         {
           event: config.event || '*',
