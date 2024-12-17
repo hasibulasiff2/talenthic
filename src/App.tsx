@@ -24,8 +24,8 @@ import TimeTracking from "./pages/collaboration/TimeTracking";
 import Milestones from "./pages/collaboration/Milestones";
 import Payments from "./pages/collaboration/Payments";
 import CreateContract from "./pages/collaboration/CreateContract";
+import PaymentSettingsPage from "./pages/payments/Settings";
 
-// Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -62,6 +62,7 @@ const AppContent = () => {
             <Route path="/collaboration/contracts/:id/time" element={<TimeTracking />} />
             <Route path="/collaboration/contracts/:id/milestones" element={<Milestones />} />
             <Route path="/collaboration/contracts/:id/payments" element={<Payments />} />
+            <Route path="/payments/settings" element={<PaymentSettingsPage />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
