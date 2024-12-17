@@ -746,33 +746,57 @@ export type Database = {
         Row: {
           account_type: string | null
           bio: string | null
+          business_address: string | null
+          business_name: string | null
+          contact_number: string | null
           created_at: string
+          education_background: Json | null
           full_name: string | null
           id: string
+          industry_type: string | null
           is_company_account: boolean | null
           is_verified: boolean | null
+          payment_info: Json | null
+          portfolio_links: string[] | null
+          preferred_categories: string[] | null
           resume_url: string | null
           skills: string[] | null
         }
         Insert: {
           account_type?: string | null
           bio?: string | null
+          business_address?: string | null
+          business_name?: string | null
+          contact_number?: string | null
           created_at?: string
+          education_background?: Json | null
           full_name?: string | null
           id: string
+          industry_type?: string | null
           is_company_account?: boolean | null
           is_verified?: boolean | null
+          payment_info?: Json | null
+          portfolio_links?: string[] | null
+          preferred_categories?: string[] | null
           resume_url?: string | null
           skills?: string[] | null
         }
         Update: {
           account_type?: string | null
           bio?: string | null
+          business_address?: string | null
+          business_name?: string | null
+          contact_number?: string | null
           created_at?: string
+          education_background?: Json | null
           full_name?: string | null
           id?: string
+          industry_type?: string | null
           is_company_account?: boolean | null
           is_verified?: boolean | null
+          payment_info?: Json | null
+          portfolio_links?: string[] | null
+          preferred_categories?: string[] | null
           resume_url?: string | null
           skills?: string[] | null
         }
@@ -930,6 +954,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      account_type: "user" | "business"
       contract_status:
         | "draft"
         | "pending"
