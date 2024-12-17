@@ -99,6 +99,60 @@ export type Database = {
         }
         Relationships: []
       }
+      company_subscriptions: {
+        Row: {
+          canceled_at: string | null
+          company_id: string
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          payment_method_id: string | null
+          plan_id: string
+          status: string
+          subscription_id: string | null
+        }
+        Insert: {
+          canceled_at?: string | null
+          company_id: string
+          created_at?: string
+          current_period_end: string
+          current_period_start: string
+          id?: string
+          payment_method_id?: string | null
+          plan_id: string
+          status?: string
+          subscription_id?: string | null
+        }
+        Update: {
+          canceled_at?: string | null
+          company_id?: string
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          payment_method_id?: string | null
+          plan_id?: string
+          status?: string
+          subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_subscriptions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contract_signatures: {
         Row: {
           contract_id: string
@@ -363,6 +417,53 @@ export type Database = {
           symbol?: string
         }
         Relationships: []
+      }
+      featured_listings: {
+        Row: {
+          amount_paid: number
+          company_id: string
+          created_at: string
+          end_date: string
+          id: string
+          listing_id: string
+          listing_type: string
+          payment_id: string | null
+          start_date: string
+          status: string
+        }
+        Insert: {
+          amount_paid: number
+          company_id: string
+          created_at?: string
+          end_date: string
+          id?: string
+          listing_id: string
+          listing_type: string
+          payment_id?: string | null
+          start_date: string
+          status?: string
+        }
+        Update: {
+          amount_paid?: number
+          company_id?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          listing_id?: string
+          listing_type?: string
+          payment_id?: string | null
+          start_date?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_listings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       gigs: {
         Row: {
@@ -854,6 +955,33 @@ export type Database = {
           },
         ]
       }
+      subscription_plans: {
+        Row: {
+          created_at: string
+          features: Json
+          id: string
+          name: string
+          price: number
+          type: Database["public"]["Enums"]["plan_type"]
+        }
+        Insert: {
+          created_at?: string
+          features: Json
+          id?: string
+          name: string
+          price: number
+          type: Database["public"]["Enums"]["plan_type"]
+        }
+        Update: {
+          created_at?: string
+          features?: Json
+          id?: string
+          name?: string
+          price?: number
+          type?: Database["public"]["Enums"]["plan_type"]
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           assigned_to: string | null
@@ -975,6 +1103,7 @@ export type Database = {
         | "contract"
       payment_status: "pending" | "processing" | "completed" | "failed"
       payment_type: "fixed" | "hourly"
+      plan_type: "free" | "basic" | "premium" | "enterprise"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
+import type { Database } from "@/integrations/supabase/types";
+
+type SubscriptionPlan = Database['public']['Tables']['subscription_plans']['Row'];
 
 const PricingPage = () => {
   const navigate = useNavigate();
@@ -17,12 +20,12 @@ const PricingPage = () => {
     queryKey: ["subscription-plans"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("subscription_plans")
-        .select("*")
-        .order("price");
+        .from('subscription_plans')
+        .select('*')
+        .order('price');
       
       if (error) throw error;
-      return data;
+      return data as SubscriptionPlan[];
     },
   });
 
@@ -106,45 +109,49 @@ const PricingPage = () => {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-4 mb-6">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-primary" />
-                    <span>
-                      {plan.features.job_posts === -1
-                        ? "Unlimited job posts"
-                        : `${plan.features.job_posts} job posts`}
-                    </span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-primary" />
-                    <span>
-                      {plan.features.featured_posts === -1
-                        ? "Unlimited featured posts"
-                        : `${plan.features.featured_posts} featured posts`}
-                    </span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-primary" />
-                    <span>
-                      {plan.features.candidate_filters} candidate filters
-                    </span>
-                  </li>
-                  {plan.features.analytics && (
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-primary" />
-                      <span>Analytics dashboard</span>
-                    </li>
-                  )}
-                  {plan.features.priority_support && (
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-primary" />
-                      <span>Priority support</span>
-                    </li>
-                  )}
-                  {plan.features.custom_branding && (
-                    <li className="flex items-center gap-2">
-                      <Check className="w-5 h-5 text-primary" />
-                      <span>Custom branding</span>
-                    </li>
+                  {plan.features && typeof plan.features === 'object' && (
+                    <>
+                      <li className="flex items-center gap-2">
+                        <Check className="w-5 h-5 text-primary" />
+                        <span>
+                          {(plan.features as any).job_posts === -1
+                            ? "Unlimited job posts"
+                            : `${(plan.features as any).job_posts} job posts`}
+                        </span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="w-5 h-5 text-primary" />
+                        <span>
+                          {(plan.features as any).featured_posts === -1
+                            ? "Unlimited featured posts"
+                            : `${(plan.features as any).featured_posts} featured posts`}
+                        </span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="w-5 h-5 text-primary" />
+                        <span>
+                          {(plan.features as any).candidate_filters} candidate filters
+                        </span>
+                      </li>
+                      {(plan.features as any).analytics && (
+                        <li className="flex items-center gap-2">
+                          <Check className="w-5 h-5 text-primary" />
+                          <span>Analytics dashboard</span>
+                        </li>
+                      )}
+                      {(plan.features as any).priority_support && (
+                        <li className="flex items-center gap-2">
+                          <Check className="w-5 h-5 text-primary" />
+                          <span>Priority support</span>
+                        </li>
+                      )}
+                      {(plan.features as any).custom_branding && (
+                        <li className="flex items-center gap-2">
+                          <Check className="w-5 h-5 text-primary" />
+                          <span>Custom branding</span>
+                        </li>
+                      )}
+                    </>
                   )}
                 </ul>
                 <Button 
