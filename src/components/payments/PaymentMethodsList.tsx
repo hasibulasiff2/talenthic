@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Wallet, Bank } from "lucide-react";
+import { CreditCard, Wallet, Building2 } from "lucide-react";
 
 export const PaymentMethodsList = () => {
   const { data: paymentMethods, isLoading } = useQuery({
@@ -41,7 +41,7 @@ export const PaymentMethodsList = () => {
       case "card":
         return <CreditCard className="w-6 h-6" />;
       case "bank_account":
-        return <Bank className="w-6 h-6" />;
+        return <Building2 className="w-6 h-6" />;
       default:
         return <Wallet className="w-6 h-6" />;
     }
