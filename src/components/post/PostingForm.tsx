@@ -47,7 +47,7 @@ const PostingForm = ({ type }: PostingFormProps) => {
   });
 
   const onSubmit = async (data: FormData) => {
-    if (!session?.user?.id) {
+    if (!session) {
       toast.error("Please sign in to post an opportunity");
       navigate("/login");
       return;
@@ -62,7 +62,7 @@ const PostingForm = ({ type }: PostingFormProps) => {
           *,
           companies:companies(*)
         `)
-        .eq("id", session.user.id)
+        .eq("id", session.id)
         .single();
 
       if (profileError || !profileData) {

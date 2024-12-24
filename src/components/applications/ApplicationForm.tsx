@@ -29,7 +29,7 @@ export const ApplicationForm = ({ internshipId, onSuccess }: ApplicationFormProp
   });
 
   const onSubmit = async (data: FormData) => {
-    if (!session?.user?.id) {
+    if (!session) {
       toast.error("Please sign in to apply");
       navigate("/login");
       return;
@@ -39,7 +39,7 @@ export const ApplicationForm = ({ internshipId, onSuccess }: ApplicationFormProp
     try {
       const { error } = await supabase.from("applications").insert({
         internship_id: internshipId,
-        applicant_id: session.user.id,
+        applicant_id: session.id,
         cover_letter: data.cover_letter,
         status: "pending",
       });

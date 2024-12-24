@@ -30,7 +30,7 @@ const PricingPage = () => {
   });
 
   const handleSubscribe = async (planId: string) => {
-    if (!session?.user?.id) {
+    if (!session) {
       toast.error("Please sign in to subscribe to a plan");
       navigate("/login");
       return;
@@ -39,7 +39,7 @@ const PricingPage = () => {
     const { data: profile } = await supabase
       .from("profiles")
       .select("*, companies(*)")
-      .eq("id", session.user.id)
+      .eq("id", session.id)
       .single();
 
     if (!profile?.is_company_account) {
