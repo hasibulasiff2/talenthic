@@ -9,16 +9,17 @@ import { LoadingState } from "@/components/collaboration/LoadingState";
 import { EmptyState } from "@/components/collaboration/EmptyState";
 import { ContractsList } from "@/components/collaboration/ContractsList";
 import { useRealtimeUpdates } from "@/hooks/use-realtime-updates";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 
 const CollaborationHub = () => {
   const navigate = useNavigate();
+  const { session } = useAuth();
   
   const { data: contracts, isLoading, error, refetch } = useQuery({
     queryKey: ["contracts"],
     queryFn: async () => {
-      const { data: profile } = await supabase.auth.getUser();
-      if (!profile.user) throw new Error("Not authenticated");
+      if (!session?.id) throw new Error("Not authenticated");
 
       const { data, error } = await supabase
         .from("contracts")
@@ -27,12 +28,13 @@ const CollaborationHub = () => {
           company:companies(*),
           intern:profiles(*)
         `)
-        .or(`intern_id.eq.${profile.user.id},company_id.in.(select id from companies where id in (select company_id from profiles where id = ${profile.user.id}))`)
+        .or(`intern_id.eq.${session.id},company_id.in.(select id from companies where id in (select company_id from profiles where id = ${session.id}))`)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;
     },
+    enabled: !!session?.id,
   });
 
   useRealtimeUpdates(
@@ -42,6 +44,23 @@ const CollaborationHub = () => {
       toast.success("Contract updated");
     }
   );
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-accent">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="bg-white rounded-lg p-8 text-center">
+            <h2 className="text-xl font-semibold mb-2">Please sign in</h2>
+            <p className="text-muted-foreground mb-4">
+              You need to be signed in to access the Collaboration Hub
+            </p>
+            <Button onClick={() => navigate("/login")}>Sign In</Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (error) {
     return (
