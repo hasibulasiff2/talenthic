@@ -22,12 +22,18 @@ export const HeroSearch = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="flex gap-2 max-w-2xl mx-auto">
+    <form 
+      onSubmit={handleSearch} 
+      className="flex gap-2 max-w-2xl mx-auto relative group"
+    >
+      <div className="absolute inset-0 bg-white/30 backdrop-blur-lg rounded-lg shadow-2xl -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary-muted/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+      
       <Select
         value={searchType}
         onValueChange={setSearchType}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[180px] bg-white/80 backdrop-blur-sm border-white/20">
           <SelectValue placeholder="Search in..." />
         </SelectTrigger>
         <SelectContent>
@@ -42,13 +48,17 @@ export const HeroSearch = () => {
           placeholder="Search opportunities..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full"
+          className="w-full bg-white/80 backdrop-blur-sm border-white/20"
         />
       </div>
       
-      <Button type="submit">
-        <Search className="w-4 h-4 mr-2" />
-        Search
+      <Button 
+        type="submit"
+        className="relative overflow-hidden group bg-gradient-to-r from-primary to-primary-muted hover:opacity-90 transition-opacity"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-muted to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <Search className="w-4 h-4 mr-2 relative z-10" />
+        <span className="relative z-10">Search</span>
       </Button>
     </form>
   );
