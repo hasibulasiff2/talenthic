@@ -47,7 +47,7 @@ const PostingForm = ({ type }: PostingFormProps) => {
   });
 
   const onSubmit = async (data: FormData) => {
-    if (!session?.user) {
+    if (!session?.user?.id) {
       toast.error("Please sign in to post an opportunity");
       navigate("/login");
       return;

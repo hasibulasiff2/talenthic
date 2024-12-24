@@ -30,7 +30,7 @@ const PricingPage = () => {
   });
 
   const handleSubscribe = async (planId: string) => {
-    if (!session) {
+    if (!session?.user?.id) {
       toast.error("Please sign in to subscribe to a plan");
       navigate("/login");
       return;
