@@ -5,10 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import type { Application } from "@/types/applications";
 
 const ApplicantTracker = () => {
-  const { user } = useAuth();
+  const { session } = useAuth();
 
   const { data: applications, isLoading } = useQuery({
-    queryKey: ["applications", user?.id],
+    queryKey: ["applications", session?.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("applications")
@@ -17,11 +17,12 @@ const ApplicantTracker = () => {
           internship:internships(title),
           applicant:profiles(full_name, email)
         `)
-        .eq("internship.company_id", user?.id);
+        .eq("internship.company_id", session?.user?.id);
 
       if (error) throw error;
       return data as Application[];
     },
+    enabled: !!session?.user?.id,
   });
 
   if (isLoading) return <div>Loading...</div>;
