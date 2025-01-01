@@ -23,8 +23,7 @@ const Index = () => {
               <span className="text-primary">Internship or Gig</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mb-12">
-              Connect with top companies, gain valuable experience, and kickstart your career
-              with AI-powered job matching and secure collaboration tools.
+              Connecting Talent with Opportunity
             </p>
             <HeroSearch />
           </div>

@@ -11,7 +11,11 @@ const Header = () => {
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold text-xl text-secondary">Talenthic</span>
+            <img 
+              src="/lovable-uploads/b9e32f10-62ca-49be-b5df-c05c1e950747.png" 
+              alt="TalenThic Logo" 
+              className="h-8"
+            />
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link to="/internships" className="text-muted-foreground hover:text-secondary transition-colors">
