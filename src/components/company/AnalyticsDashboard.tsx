@@ -10,15 +10,15 @@ interface ApplicationStats {
 }
 
 export const AnalyticsDashboard = () => {
-  const { session } = useAuth();
+  const { user } = useAuth();
 
   const { data: analyticsData } = useQuery({
-    queryKey: ["company-analytics", session?.id],
+    queryKey: ["company-analytics", user?.id],
     queryFn: async () => {
       const { data: applications, error } = await supabase
         .from("applications")
         .select("created_at, status")
-        .eq("company_id", session?.id);
+        .eq("company_id", user?.id);
 
       if (error) throw error;
 
@@ -26,7 +26,7 @@ export const AnalyticsDashboard = () => {
         applications: applications || [],
       };
     },
-    enabled: !!session?.id,
+    enabled: !!user?.id,
   });
 
   const applicationsByStatus = analyticsData?.applications.reduce((acc: Record<string, number>, curr) => {

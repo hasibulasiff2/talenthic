@@ -19,10 +19,10 @@ interface Application {
 }
 
 export const ApplicantTracker = () => {
-  const { session } = useAuth();
+  const { user } = useAuth();
 
   const { data: applications } = useQuery({
-    queryKey: ["applications", session?.id],
+    queryKey: ["applications", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("applications")
@@ -31,12 +31,12 @@ export const ApplicantTracker = () => {
           internship:internships(title),
           applicant:profiles(full_name, email)
         `)
-        .eq("company_id", session?.id);
+        .eq("company_id", user?.id);
 
       if (error) throw error;
       return data as Application[];
     },
-    enabled: !!session?.id,
+    enabled: !!user?.id,
   });
 
   const getStatusColor = (status: string) => {
