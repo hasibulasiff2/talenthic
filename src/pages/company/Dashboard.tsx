@@ -1,9 +1,13 @@
 import React from "react";
 import Header from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Briefcase, Users, Clock } from "lucide-react";
+import { CompanyProfileForm } from "@/components/company/CompanyProfileForm";
+import { AnalyticsDashboard } from "@/components/company/AnalyticsDashboard";
+import { ApplicantTracker } from "@/components/company/ApplicantTracker";
 
 const CompanyDashboard = () => {
   const { data: stats } = useQuery({
@@ -64,6 +68,26 @@ const CompanyDashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="profile">Company Profile</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="applications">Applications</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="profile">
+            <CompanyProfileForm />
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="applications">
+            <ApplicantTracker />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
