@@ -11,7 +11,7 @@ export const RecommendedListings = () => {
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
-        .single();
+        .maybeSingle(); // Changed from .single() to .maybeSingle()
 
       if (error) throw error;
       return profile;
