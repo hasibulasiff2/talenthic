@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
 
 interface ProfileFormData {
   full_name: string;
@@ -53,7 +54,6 @@ const ProfileSettings = () => {
       }
 
       if (profile) {
-        // Ensure education_background is properly typed when coming from JSON
         const educationBackground = profile.education_background as ProfileFormData['education_background'] || {
           degree: "",
           university: "",
@@ -124,7 +124,7 @@ const ProfileSettings = () => {
   };
 
   return (
-    <div className="container py-10">
+    <div className="container py-10 space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Profile Settings</CardTitle>
@@ -193,6 +193,8 @@ const ProfileSettings = () => {
           </Form>
         </CardContent>
       </Card>
+
+      <NotificationPreferences />
     </div>
   );
 };
