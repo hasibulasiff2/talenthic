@@ -7,6 +7,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
+interface NotificationTypes {
+  messages: boolean;
+  applications: boolean;
+  contracts: boolean;
+  payments: boolean;
+}
+
+interface NotificationPreferences {
+  email_notifications: boolean;
+  in_app_notifications: boolean;
+  notification_types: NotificationTypes;
+}
+
+const defaultPreferences: NotificationPreferences = {
+  email_notifications: true,
+  in_app_notifications: true,
+  notification_types: {
+    messages: true,
+    applications: true,
+    contracts: true,
+    payments: true,
+  },
+};
+
 export const NotificationPreferences = () => {
   const { session } = useAuth();
   const { toast } = useToast();
@@ -17,29 +41,20 @@ export const NotificationPreferences = () => {
       const { data, error } = await supabase
         .from("profiles")
         .select("notification_preferences")
-        .eq("id", session?.id)
+        .eq("id", session?.user?.id)
         .single();
 
       if (error) throw error;
-      return data?.notification_preferences || {
-        email_notifications: true,
-        in_app_notifications: true,
-        notification_types: {
-          messages: true,
-          applications: true,
-          contracts: true,
-          payments: true,
-        },
-      };
+      return (data?.notification_preferences as NotificationPreferences) || defaultPreferences;
     },
   });
 
   const updatePreferences = useMutation({
-    mutationFn: async (newPreferences: any) => {
+    mutationFn: async (newPreferences: NotificationPreferences) => {
       const { error } = await supabase
         .from("profiles")
         .update({ notification_preferences: newPreferences })
-        .eq("id", session?.id);
+        .eq("id", session?.user?.id);
 
       if (error) throw error;
     },
@@ -61,8 +76,8 @@ export const NotificationPreferences = () => {
   const handleToggle = (path: string[], value: boolean) => {
     if (!preferences) return;
 
-    const newPreferences = { ...preferences };
-    let current = newPreferences;
+    const newPreferences = { ...preferences } as NotificationPreferences;
+    let current: any = newPreferences;
     for (let i = 0; i < path.length - 1; i++) {
       current = current[path[i]];
     }
@@ -73,6 +88,10 @@ export const NotificationPreferences = () => {
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (!preferences) {
+    return null;
   }
 
   return (
@@ -86,7 +105,7 @@ export const NotificationPreferences = () => {
             <Label htmlFor="email-notifications">Email Notifications</Label>
             <Switch
               id="email-notifications"
-              checked={preferences?.email_notifications}
+              checked={preferences.email_notifications}
               onCheckedChange={(checked) =>
                 handleToggle(["email_notifications"], checked)
               }
@@ -97,7 +116,7 @@ export const NotificationPreferences = () => {
             <Label htmlFor="in-app-notifications">In-app Notifications</Label>
             <Switch
               id="in-app-notifications"
-              checked={preferences?.in_app_notifications}
+              checked={preferences.in_app_notifications}
               onCheckedChange={(checked) =>
                 handleToggle(["in_app_notifications"], checked)
               }
@@ -108,7 +127,7 @@ export const NotificationPreferences = () => {
         <div className="space-y-4">
           <h3 className="text-sm font-medium">Notification Types</h3>
           <div className="space-y-4">
-            {Object.entries(preferences?.notification_types || {}).map(
+            {Object.entries(preferences.notification_types).map(
               ([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
                   <Label htmlFor={`notification-type-${key}`}>
@@ -116,7 +135,7 @@ export const NotificationPreferences = () => {
                   </Label>
                   <Switch
                     id={`notification-type-${key}`}
-                    checked={value as boolean}
+                    checked={value}
                     onCheckedChange={(checked) =>
                       handleToggle(["notification_types", key], checked)
                     }
