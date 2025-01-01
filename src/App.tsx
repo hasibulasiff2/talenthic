@@ -26,10 +26,16 @@ import Payments from "./pages/collaboration/Payments";
 import CreateContract from "./pages/collaboration/CreateContract";
 import PaymentSettingsPage from "./pages/payments/Settings";
 
+// New imports
+import ProfileSettings from "./pages/profile/Settings";
+import UserDashboard from "./pages/profile/Dashboard";
+import PasswordReset from "./pages/auth/PasswordReset";
+import EmailVerification from "./pages/auth/EmailVerification";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
       retry: 1,
     },
   },
@@ -63,6 +69,12 @@ const AppContent = () => {
             <Route path="/collaboration/contracts/:id/milestones" element={<Milestones />} />
             <Route path="/collaboration/contracts/:id/payments" element={<Payments />} />
             <Route path="/payments/settings" element={<PaymentSettingsPage />} />
+            
+            {/* New routes */}
+            <Route path="/profile/settings" element={<ProfileSettings />} />
+            <Route path="/profile/dashboard" element={<UserDashboard />} />
+            <Route path="/auth/reset-password" element={<PasswordReset />} />
+            <Route path="/auth/verify-email" element={<EmailVerification />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
