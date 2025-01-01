@@ -4,30 +4,33 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 
+interface ApplicationStats {
+  status: string;
+  count: number;
+}
+
 export const AnalyticsDashboard = () => {
   const { session } = useAuth();
 
   const { data: analyticsData } = useQuery({
-    queryKey: ["company-analytics", session?.user?.id],
+    queryKey: ["company-analytics", session?.id],
     queryFn: async () => {
-      const [applications, views] = await Promise.all([
-        supabase
-          .from("applications")
-          .select("created_at, status")
-          .eq("company_id", session?.user?.id),
-        // Add more analytics queries here
-      ]);
+      const { data: applications, error } = await supabase
+        .from("applications")
+        .select("created_at, status")
+        .eq("company_id", session?.id);
+
+      if (error) throw error;
 
       return {
-        applications: applications.data || [],
-        views: views.data || [],
+        applications: applications || [],
       };
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.id,
   });
 
-  const applicationsByStatus = analyticsData?.applications.reduce((acc: any, curr: any) => {
-    acc[curr.status] = (acc[curr.status] || 0) + 1;
+  const applicationsByStatus = analyticsData?.applications.reduce((acc: Record<string, number>, curr) => {
+    acc[curr.status || 'pending'] = (acc[curr.status || 'pending'] || 0) + 1;
     return acc;
   }, {});
 

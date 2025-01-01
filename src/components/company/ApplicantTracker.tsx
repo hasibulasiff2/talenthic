@@ -5,11 +5,24 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 
+interface Application {
+  id: string;
+  status: string;
+  created_at: string;
+  internship: {
+    title: string;
+  } | null;
+  applicant: {
+    full_name: string;
+    email: string;
+  } | null;
+}
+
 export const ApplicantTracker = () => {
   const { session } = useAuth();
 
   const { data: applications } = useQuery({
-    queryKey: ["applications", session?.user?.id],
+    queryKey: ["applications", session?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("applications")
@@ -18,12 +31,12 @@ export const ApplicantTracker = () => {
           internship:internships(title),
           applicant:profiles(full_name, email)
         `)
-        .eq("company_id", session?.user?.id);
+        .eq("company_id", session?.id);
 
       if (error) throw error;
-      return data;
+      return data as Application[];
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.id,
   });
 
   const getStatusColor = (status: string) => {
