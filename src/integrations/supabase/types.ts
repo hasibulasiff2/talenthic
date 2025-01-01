@@ -692,6 +692,7 @@ export type Database = {
       notifications: {
         Row: {
           created_at: string
+          email_sent: boolean | null
           id: string
           message: string
           notification_type:
@@ -705,6 +706,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email_sent?: boolean | null
           id?: string
           message: string
           notification_type?:
@@ -718,6 +720,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email_sent?: boolean | null
           id?: string
           message?: string
           notification_type?:
@@ -892,6 +895,7 @@ export type Database = {
           industry_type: string | null
           is_company_account: boolean | null
           is_verified: boolean | null
+          notification_preferences: Json | null
           payment_info: Json | null
           portfolio_links: string[] | null
           preferred_categories: string[] | null
@@ -911,6 +915,7 @@ export type Database = {
           industry_type?: string | null
           is_company_account?: boolean | null
           is_verified?: boolean | null
+          notification_preferences?: Json | null
           payment_info?: Json | null
           portfolio_links?: string[] | null
           preferred_categories?: string[] | null
@@ -930,6 +935,7 @@ export type Database = {
           industry_type?: string | null
           is_company_account?: boolean | null
           is_verified?: boolean | null
+          notification_preferences?: Json | null
           payment_info?: Json | null
           portfolio_links?: string[] | null
           preferred_categories?: string[] | null
