@@ -1,14 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { FilterDropdown } from "./FilterDropdown";
 import { X } from "lucide-react";
+import { FilterDropdown } from "./FilterDropdown";
+import { SaveSearchButton } from "./SaveSearchButton";
 
 interface SearchFiltersProps {
   type: "gigs" | "internships";
@@ -115,8 +109,8 @@ export function SearchFilters({
         </div>
       </div>
 
-      {hasActiveFilters && (
-        <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        {hasActiveFilters && (
           <Button
             variant="ghost"
             size="sm"
@@ -126,8 +120,9 @@ export function SearchFilters({
             <X className="w-4 h-4 mr-2" />
             Clear Filters
           </Button>
-        </div>
-      )}
+        )}
+        <SaveSearchButton filters={filters} type={type} />
+      </div>
     </div>
   );
 }

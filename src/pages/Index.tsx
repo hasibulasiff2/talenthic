@@ -9,6 +9,7 @@ import { Stats } from "@/components/home/Stats";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { TrustSignals } from "@/components/home/TrustSignals";
 import { WaitlistForm } from "@/components/home/WaitlistForm";
+import { RecommendedListings } from "@/components/home/RecommendedListings";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -28,6 +29,7 @@ const Index = () => {
             <HeroSearch />
           </div>
         </section>
+        <RecommendedListings />
         <FeaturedInternships />
         <FeaturedGigs />
         <Features />
