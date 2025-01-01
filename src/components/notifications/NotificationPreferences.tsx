@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Json } from "@/integrations/supabase/types";
 
 interface NotificationTypes {
   messages: boolean;
@@ -45,7 +46,29 @@ export const NotificationPreferences = () => {
         .single();
 
       if (error) throw error;
-      return (data?.notification_preferences as NotificationPreferences) || defaultPreferences;
+
+      const prefs = data?.notification_preferences as Json;
+      if (!prefs) return defaultPreferences;
+
+      // Validate the structure matches our expected interface
+      const validatedPrefs: NotificationPreferences = {
+        email_notifications: typeof prefs === 'object' && 'email_notifications' in prefs 
+          ? Boolean(prefs.email_notifications)
+          : defaultPreferences.email_notifications,
+        in_app_notifications: typeof prefs === 'object' && 'in_app_notifications' in prefs
+          ? Boolean(prefs.in_app_notifications)
+          : defaultPreferences.in_app_notifications,
+        notification_types: typeof prefs === 'object' && 'notification_types' in prefs && typeof prefs.notification_types === 'object'
+          ? {
+              messages: Boolean((prefs.notification_types as any)?.messages ?? defaultPreferences.notification_types.messages),
+              applications: Boolean((prefs.notification_types as any)?.applications ?? defaultPreferences.notification_types.applications),
+              contracts: Boolean((prefs.notification_types as any)?.contracts ?? defaultPreferences.notification_types.contracts),
+              payments: Boolean((prefs.notification_types as any)?.payments ?? defaultPreferences.notification_types.payments),
+            }
+          : defaultPreferences.notification_types,
+      };
+
+      return validatedPrefs;
     },
   });
 
@@ -53,7 +76,9 @@ export const NotificationPreferences = () => {
     mutationFn: async (newPreferences: NotificationPreferences) => {
       const { error } = await supabase
         .from("profiles")
-        .update({ notification_preferences: newPreferences })
+        .update({ 
+          notification_preferences: newPreferences as unknown as Json 
+        })
         .eq("id", session?.user?.id);
 
       if (error) throw error;
@@ -76,7 +101,7 @@ export const NotificationPreferences = () => {
   const handleToggle = (path: string[], value: boolean) => {
     if (!preferences) return;
 
-    const newPreferences = { ...preferences } as NotificationPreferences;
+    const newPreferences = { ...preferences };
     let current: any = newPreferences;
     for (let i = 0; i < path.length - 1; i++) {
       current = current[path[i]];
