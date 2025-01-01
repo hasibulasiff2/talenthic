@@ -58,11 +58,17 @@ const ProfileSettings = () => {
           full_name: profile.full_name || "",
           bio: profile.bio || "",
           contact_number: profile.contact_number,
-          education_background: typeof profile.education_background === 'object' ? profile.education_background : {
-            degree: "",
-            university: "",
-            graduation_year: ""
-          },
+          education_background: profile.education_background && typeof profile.education_background === 'object' && !Array.isArray(profile.education_background)
+            ? {
+                degree: profile.education_background.degree || "",
+                university: profile.education_background.university || "",
+                graduation_year: profile.education_background.graduation_year || ""
+              }
+            : {
+                degree: "",
+                university: "",
+                graduation_year: ""
+              },
           portfolio_links: profile.portfolio_links,
           business_name: profile.business_name,
           industry_type: profile.industry_type,
