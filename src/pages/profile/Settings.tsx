@@ -53,7 +53,22 @@ const ProfileSettings = () => {
       }
 
       if (profile) {
-        form.reset(profile);
+        // Transform the education_background from JSON to the expected format
+        const formattedProfile: ProfileFormData = {
+          full_name: profile.full_name || "",
+          bio: profile.bio || "",
+          contact_number: profile.contact_number,
+          education_background: typeof profile.education_background === 'object' ? profile.education_background : {
+            degree: "",
+            university: "",
+            graduation_year: ""
+          },
+          portfolio_links: profile.portfolio_links,
+          business_name: profile.business_name,
+          industry_type: profile.industry_type,
+          business_address: profile.business_address
+        };
+        form.reset(formattedProfile);
       }
     };
 
