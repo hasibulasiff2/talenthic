@@ -18,13 +18,13 @@ const EmailVerification = () => {
   }, [session, navigate]);
 
   const handleResendVerification = async () => {
-    if (!session?.email) return;
+    if (!session?.user?.email) return;
 
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.resend({
         type: "signup",
-        email: session.email,
+        email: session.user.email,
       });
 
       if (error) throw error;

@@ -26,7 +26,7 @@ export const MessageList = ({ messages, className = "" }: MessageListProps) => {
     <ScrollArea className={`h-[400px] pr-4 ${className}`}>
       <div className="space-y-4">
         {messages.map((message) => {
-          const isOwnMessage = message.sender_id === session?.id;
+          const isOwnMessage = message.sender_id === session?.user?.id;
           return (
             <div
               key={message.id}

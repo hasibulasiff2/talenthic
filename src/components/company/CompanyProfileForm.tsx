@@ -26,7 +26,7 @@ export const CompanyProfileForm = () => {
       const { error } = await supabase
         .from("companies")
         .update(data)
-        .eq("id", session?.id);
+        .eq("id", session?.user?.id);
 
       if (error) throw error;
       toast.success("Company profile updated successfully");

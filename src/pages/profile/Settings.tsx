@@ -36,7 +36,7 @@ const ProfileSettings = () => {
   const form = useForm<ProfileFormData>();
 
   useEffect(() => {
-    if (!session) {
+    if (!session?.user) {
       navigate("/login");
       return;
     }
@@ -45,7 +45,7 @@ const ProfileSettings = () => {
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", session.id)
+        .eq("id", session.user.id)
         .single();
 
       if (error) {
@@ -78,14 +78,14 @@ const ProfileSettings = () => {
   }, [session, navigate, form]);
 
   const onSubmit = async (data: ProfileFormData) => {
-    if (!session) return;
+    if (!session?.user) return;
 
     setIsLoading(true);
     try {
       const { error } = await supabase
         .from("profiles")
         .update(data)
-        .eq("id", session.id);
+        .eq("id", session.user.id);
 
       if (error) throw error;
 
@@ -100,11 +100,11 @@ const ProfileSettings = () => {
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !session) return;
+    if (!file || !session?.user) return;
 
     try {
       const fileExt = file.name.split(".").pop();
-      const fileName = `${session.id}-avatar.${fileExt}`;
+      const fileName = `${session.user.id}-avatar.${fileExt}`;
       const { error: uploadError } = await supabase.storage
         .from("avatars")
         .upload(fileName, file, { upsert: true });

@@ -14,19 +14,19 @@ export const ApplicationStatus = ({ internshipId }: ApplicationStatusProps) => {
   const { data: application, isLoading } = useQuery({
     queryKey: ["application", internshipId],
     queryFn: async () => {
-      if (!session) return null;
+      if (!session?.user) return null;
 
       const { data, error } = await supabase
         .from("applications")
         .select("*")
         .eq("internship_id", internshipId)
-        .eq("applicant_id", session.id)
+        .eq("applicant_id", session.user.id)
         .single();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!session && !!internshipId,
+    enabled: !!session?.user && !!internshipId,
   });
 
   if (isLoading || !application) return null;

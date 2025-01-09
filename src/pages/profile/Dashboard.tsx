@@ -29,9 +29,9 @@ const UserDashboard = () => {
   }, [session, navigate]);
 
   const { data: applications, isLoading } = useQuery({
-    queryKey: ["applications", session?.id],
+    queryKey: ["applications", session?.user?.id],
     queryFn: async () => {
-      if (!session) return [];
+      if (!session?.user) return [];
 
       const { data, error } = await supabase
         .from("applications")
@@ -44,13 +44,13 @@ const UserDashboard = () => {
             )
           )
         `)
-        .eq("applicant_id", session.id)
+        .eq("applicant_id", session.user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;
     },
-    enabled: !!session,
+    enabled: !!session?.user,
   });
 
   const getStatusColor = (status: string) => {

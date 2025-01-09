@@ -19,7 +19,7 @@ const CollaborationHub = () => {
   const { data: contracts, isLoading, error, refetch } = useQuery({
     queryKey: ["contracts"],
     queryFn: async () => {
-      if (!session?.id) throw new Error("Not authenticated");
+      if (!session?.user?.id) throw new Error("Not authenticated");
 
       const { data, error } = await supabase
         .from("contracts")
@@ -28,13 +28,13 @@ const CollaborationHub = () => {
           company:companies(*),
           intern:profiles(*)
         `)
-        .or(`intern_id.eq.${session.id},company_id.in.(select id from companies where id in (select company_id from profiles where id = ${session.id}))`)
+        .or(`intern_id.eq.${session.user.id},company_id.in.(select id from companies where id in (select company_id from profiles where id = ${session.user.id}))`)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;
     },
-    enabled: !!session?.id,
+    enabled: !!session?.user?.id,
   });
 
   useRealtimeUpdates(

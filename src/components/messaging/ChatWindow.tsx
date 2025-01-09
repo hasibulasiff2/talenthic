@@ -36,7 +36,7 @@ export const ChatWindow = ({ contractId, otherPartyName }: ChatWindowProps) => {
       const { error } = await supabase.from("messages").insert({
         content,
         contract_id: contractId,
-        sender_id: session?.id,
+        sender_id: session?.user?.id,
       });
 
       if (error) throw error;
