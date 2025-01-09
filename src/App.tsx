@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import AppRoutes from "@/routes";
+import { AppRoutes } from "@/routes";
 
 const queryClient = new QueryClient();
 
