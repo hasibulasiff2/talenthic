@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Briefcase, Users, Clock } from "lucide-react";
 import { CompanyProfileForm } from "@/components/company/CompanyProfileForm";
 import { AnalyticsDashboard } from "@/components/company/AnalyticsDashboard";
-import { ApplicantTracker } from "@/components/company/ApplicantTracker";
+import ApplicantTracker from "@/components/company/ApplicantTracker";
 
 const CompanyDashboard = () => {
   const { data: stats } = useQuery({

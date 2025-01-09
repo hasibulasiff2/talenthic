@@ -39,7 +39,7 @@ const PricingPage = () => {
     const { data: profile } = await supabase
       .from("profiles")
       .select("*, companies(*)")
-      .eq("id", session.id)
+      .eq("id", session.user.id)
       .single();
 
     if (!profile?.is_company_account) {
