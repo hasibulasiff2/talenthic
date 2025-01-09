@@ -11,9 +11,9 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
           <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
             <div className="min-h-screen flex flex-col">
               <Header />
@@ -24,9 +24,9 @@ function App() {
             </div>
             <Toaster />
           </ThemeProvider>
-        </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 }
 
