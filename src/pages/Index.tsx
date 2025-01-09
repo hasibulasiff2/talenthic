@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "@/components/Header";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { CallToAction } from "@/components/home/CallToAction";
 import { Features } from "@/components/home/Features";
@@ -10,12 +9,10 @@ import { HowItWorks } from "@/components/home/HowItWorks";
 import { TrustSignals } from "@/components/home/TrustSignals";
 import { WaitlistForm } from "@/components/home/WaitlistForm";
 import { RecommendedListings } from "@/components/home/RecommendedListings";
-import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main>
         <section className="relative">
           <div className="container mx-auto px-4 py-16 flex flex-col items-center text-center">
@@ -39,7 +36,6 @@ const Index = () => {
         <WaitlistForm />
         <CallToAction />
       </main>
-      <Footer />
     </div>
   );
 };
