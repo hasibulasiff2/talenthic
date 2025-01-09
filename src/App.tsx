@@ -15,7 +15,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-            <div className="min-h-screen flex flex-col">
+            <div className="min-h-screen flex flex-col bg-accent">
               <Header />
               <main className="flex-grow">
                 <AppRoutes />
