@@ -1,27 +1,31 @@
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AppRoutes } from "./routes";
-import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { AuthProvider } from "@/components/auth/AuthProvider";
+import AppRoutes from "@/routes";
 
-// Create a client
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <AppRoutes />
-            <Footer />
+      <AuthProvider>
+        <BrowserRouter>
+          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-grow">
+                <AppRoutes />
+              </main>
+              <Footer />
+            </div>
             <Toaster />
-          </div>
-        </AuthProvider>
-      </BrowserRouter>
+          </ThemeProvider>
+        </BrowserRouter>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

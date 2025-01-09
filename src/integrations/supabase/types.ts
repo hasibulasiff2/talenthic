@@ -890,6 +890,7 @@ export type Database = {
           contact_number: string | null
           created_at: string
           education_background: Json | null
+          email: string | null
           full_name: string | null
           id: string
           industry_type: string | null
@@ -910,6 +911,7 @@ export type Database = {
           contact_number?: string | null
           created_at?: string
           education_background?: Json | null
+          email?: string | null
           full_name?: string | null
           id: string
           industry_type?: string | null
@@ -930,6 +932,7 @@ export type Database = {
           contact_number?: string | null
           created_at?: string
           education_background?: Json | null
+          email?: string | null
           full_name?: string | null
           id?: string
           industry_type?: string | null
