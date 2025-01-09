@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Building2, MapPin, Clock, DollarSign, Search } from "lucide-react";
-import Header from "@/components/Header";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ApplicationForm } from "@/components/applications/ApplicationForm";
 import { ApplicationStatus } from "@/components/applications/ApplicationStatus";
@@ -154,7 +153,6 @@ const InternshipsPage = () => {
 
   return (
     <div className="min-h-screen bg-accent">
-      <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>

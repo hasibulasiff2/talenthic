@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Building2, Clock, DollarSign, Search, Filter, Tag } from "lucide-react";
-import Header from "@/components/Header";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { SearchFilters } from "@/components/search/SearchFilters";
@@ -144,7 +143,6 @@ const GigsPage = () => {
 
   return (
     <div className="min-h-screen bg-accent">
-      <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>

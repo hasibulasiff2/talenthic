@@ -1,21 +1,19 @@
-import { BrowserRouter as Router } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "@/components/auth/AuthProvider";
-import { Toaster } from "@/components/ui/sonner";
-import { AppRoutes } from "@/routes";
-
-const queryClient = new QueryClient();
+import { BrowserRouter } from "react-router-dom";
+import { AppRoutes } from "./routes";
+import { Toaster } from "@/components/ui/toaster";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 function App() {
   return (
-    <Router>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AppRoutes />
-          <Toaster />
-        </AuthProvider>
-      </QueryClientProvider>
-    </Router>
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <AppRoutes />
+        <Footer />
+        <Toaster />
+      </div>
+    </BrowserRouter>
   );
 }
 
